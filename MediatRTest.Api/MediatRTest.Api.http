@@ -1,0 +1,6 @@
+@MediatRTest.Api_HostAddress = http://localhost:5190
+
+GET {{MediatRTest.Api_HostAddress}}/todo/
+Accept: application/json
+
+###

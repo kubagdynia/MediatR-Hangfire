@@ -1,7 +1,7 @@
 using MediatRTest.Api.Endpoints;
 using MediatRTest.Core.Messages;
 using MediatRTest.Invoices.Queries;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace MediatRTest.Api.Invoices;
 
@@ -28,7 +28,7 @@ public static class GetInvoices
                 .WithTags("Invoices")
                 .WithSummary("Returns a list of all invoices")
                 .Produces<List<Response>>()
-                .Produces<EmptyResult>(StatusCodes.Status204NoContent);
+                .Produces<NoContent>(StatusCodes.Status204NoContent);
         }
     }
 }

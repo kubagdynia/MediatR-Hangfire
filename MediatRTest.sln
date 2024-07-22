@@ -5,6 +5,10 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediatRTest.Api", "MediatRTest.Api\MediatRTest.Api.csproj", "{F5946F4D-B36E-47B7-B553-3B112FDE948A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediatRTest.Invoices", "MediatRTest.Invoices\MediatRTest.Invoices.csproj", "{8F392FBB-2DDC-401D-B4A7-721EBC818C86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediatRTest.Core", "MediatRTest.Core\MediatRTest.Core.csproj", "{BCA1B951-7186-4177-AE72-C5649733583F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{F5946F4D-B36E-47B7-B553-3B112FDE948A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5946F4D-B36E-47B7-B553-3B112FDE948A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5946F4D-B36E-47B7-B553-3B112FDE948A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F392FBB-2DDC-401D-B4A7-721EBC818C86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F392FBB-2DDC-401D-B4A7-721EBC818C86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F392FBB-2DDC-401D-B4A7-721EBC818C86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F392FBB-2DDC-401D-B4A7-721EBC818C86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCA1B951-7186-4177-AE72-C5649733583F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCA1B951-7186-4177-AE72-C5649733583F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCA1B951-7186-4177-AE72-C5649733583F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCA1B951-7186-4177-AE72-C5649733583F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

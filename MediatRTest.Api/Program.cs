@@ -1,4 +1,6 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Asp.Versioning;
+using MediatRTest.Api.Endpoints;
+using MediatRTest.Invoices.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +12,21 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 // Add services to the container.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddProblemDetails();
+builder.Services
+    .AddEndpointsApiExplorer()
+    .AddSwaggerGen(options => options.CustomSchemaIds(t => t.FullName?.Replace('+', '.')))
+    .AddProblemDetails()
+    .AddEndpoints()
+    .AddInvoices()
+    .AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(1);
+        options.ApiVersionReader = new UrlSegmentApiVersionReader();
+    }).AddApiExplorer(options =>
+    {
+        options.GroupNameFormat = "'v'V";
+        options.SubstituteApiVersionInUrl = true;
+    });
 
 var app = builder.Build();
 
@@ -29,5 +42,16 @@ else
 }
 
 app.UseHttpsRedirection();
+
+var apiVersionSet = app.NewApiVersionSet()
+    .HasApiVersion(new ApiVersion(1))
+    .ReportApiVersions()
+    .Build();
+
+var versionedGroup = app
+    .MapGroup("api/v{version:apiVersion}")
+    .WithApiVersionSet(apiVersionSet);
+
+app.MapEndpoints(versionedGroup);
 
 app.Run();

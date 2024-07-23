@@ -8,11 +8,14 @@ public class CreateInvoiceHandler(IInvoiceRepository repository) : IRequestHandl
 {
     public Task<CreateInvoiceCommandResponse> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
     {
-        var invoice = new Invoice(request.Id, request.Number, request.CreationDate);
+        var invoiceId = Guid.NewGuid().ToString();
+        
+        var invoice = new Invoice(invoiceId, request.Number, request.CreationDate);
         
         repository.Create(invoice);
 
-        var response = new CreateInvoiceCommandResponse(invoice.Id, invoice.Number, invoice.CreationDate);
+        var response = new CreateInvoiceCommandResponse
+            { Id = invoice.Id, Number = invoice.Number, CreationDate = invoice.CreationDate };
 
         return Task.FromResult(response);
     }

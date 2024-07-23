@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using MediatRTest.Api.Endpoints;
+using MediatRTest.Core.Extensions;
 using MediatRTest.Invoices.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +18,7 @@ builder.Services
     .AddSwaggerGen(options => options.CustomSchemaIds(t => t.FullName?.Replace('+', '.')))
     .AddProblemDetails()
     .AddEndpoints()
-    .AddInvoices()
+    .AddInvoices(registerValidators: true)
     .AddApiVersioning(options =>
     {
         options.DefaultApiVersion = new ApiVersion(1);
@@ -40,6 +41,8 @@ else
 {
     app.UseExceptionHandler();
 }
+
+app.UseErrorHandlerMiddleware();
 
 app.UseHttpsRedirection();
 

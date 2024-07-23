@@ -2,11 +2,11 @@ using MediatRTest.Core.Responses.Domain;
 
 namespace MediatRTest.Invoices.Commands;
 
-public class CreateInvoiceCommandResponse(string id, string number, DateTime creationDate) : BaseDomainResponse
+public class CreateInvoiceCommandResponse : BaseDomainResponse
 {
-    public string Id { get; set; } = id;
+    public string Id { get; set; } = string.Empty;
 
-    public string Number { get; set; } = number;
+    public string Number { get; set; } = string.Empty;
 
-    public DateTime CreationDate { get; set; } = creationDate;
+    public DateTime CreationDate { get; set; }
 }

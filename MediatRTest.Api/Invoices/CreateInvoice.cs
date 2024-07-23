@@ -16,10 +16,8 @@ public static class CreateInvoice
         {
             endpointRouteBuilder.MapPost("invoices",  async (Request request, IMessageManager messageManager) =>
                 {
-                    var invoiceId = Guid.NewGuid().ToString();
-
                     CreateInvoiceCommandResponse result =
-                        await messageManager.SendCommand(new CreateInvoiceCommand(invoiceId, request.Number,
+                        await messageManager.SendCommand(new CreateInvoiceCommand(request.Number,
                             request.CreationDate));
                     
                     return Results.Ok(new Response(result.Id, result.Number, result.CreationDate));

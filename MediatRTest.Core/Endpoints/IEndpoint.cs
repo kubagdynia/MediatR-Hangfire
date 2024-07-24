@@ -1,4 +1,4 @@
-namespace MediatRTest.Api.Endpoints;
+namespace MediatRTest.Core.Endpoints;
 
 public interface IEndpoint
 {

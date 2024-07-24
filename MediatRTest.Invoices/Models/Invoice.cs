@@ -6,11 +6,6 @@ public class Invoice
     public string Number { get; set; }
     public DateTime CreationDate { get; set; }
 
-    public Invoice()
-    {
-
-    }
-
     public Invoice(string id, string number, DateTime creationDate)
     {
         Id = id;

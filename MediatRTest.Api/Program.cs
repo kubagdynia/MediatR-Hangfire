@@ -1,5 +1,5 @@
 ﻿using Asp.Versioning;
-using MediatRTest.Api.Endpoints;
+using MediatRTest.Core.Endpoints;
 using MediatRTest.Core.Extensions;
 using MediatRTest.Invoices.Extensions;
 

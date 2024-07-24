@@ -1,4 +1,4 @@
-using MediatRTest.Api.Endpoints;
+using MediatRTest.Core.Endpoints;
 using MediatRTest.Core.Messages;
 using MediatRTest.Invoices.Commands;
 

@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace MediatRTest.Api.Endpoints;
+namespace MediatRTest.Core.Endpoints;
 
 public static class EndpointExtensions
 {

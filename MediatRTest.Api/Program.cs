@@ -1,4 +1,5 @@
-﻿using Asp.Versioning;
+﻿using System.Reflection;
+using Asp.Versioning;
 using MediatRTest.Core.Endpoints;
 using MediatRTest.Core.Extensions;
 using MediatRTest.Invoices.Extensions;
@@ -17,7 +18,7 @@ builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen(options => options.CustomSchemaIds(t => t.FullName?.Replace('+', '.')))
     .AddProblemDetails()
-    .AddEndpoints()
+    .AddEndpoints(Assembly.GetExecutingAssembly())
     .AddInvoices(registerValidators: true)
     .AddApiVersioning(options =>
     {

@@ -10,12 +10,12 @@ public class CreateInvoiceHandler(IInvoiceRepository repository) : IRequestHandl
     {
         var invoiceId = Guid.NewGuid().ToString();
         
-        var invoice = new Invoice(invoiceId, request.Number, request.CreationDate);
+        var invoice = new DbInvoice(invoiceId, request.Number, request.Amount, request.CreationDate);
         
         repository.Create(invoice);
 
         var response = new CreateInvoiceCommandResponse
-            { Id = invoice.Id, Number = invoice.Number, CreationDate = invoice.CreationDate };
+            { Id = invoice.Id, Number = invoice.Number, Amount = invoice.Amount, CreationDate = invoice.CreationDate };
 
         return Task.FromResult(response);
     }

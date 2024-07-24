@@ -7,7 +7,7 @@ namespace MediatRTest.Api.Invoices;
 
 public static class GetInvoice
 {
-    public record Response(string Id, string Number, DateTime CreationDate);
+    public record Response(string Id, string Number, decimal Amount, DateTime CreationDate);
     
     public sealed class Endpoint : IEndpoint
     {
@@ -19,7 +19,7 @@ public static class GetInvoice
 
                 return result.Invoice is null
                     ? Results.NotFound("Not found")
-                    : Results.Ok(new Response(result.Invoice.Id, result.Invoice.Number, result.Invoice.CreationDate));
+                    : Results.Ok(new Response(result.Invoice.Id, result.Invoice.Number, result.Invoice.Amount, result.Invoice.CreationDate));
             })
             .WithTags("Invoices")
             .WithSummary("Returns the indicated invoice")

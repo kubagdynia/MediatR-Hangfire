@@ -4,11 +4,11 @@ namespace MediatRTest.Invoices.Repositories;
 
 public interface IInvoiceRepository
 {
-    IEnumerable<Invoice> Get();
+    IEnumerable<DbInvoice> Get();
 
-    Invoice? Get(string id);
+    DbInvoice? Get(string id);
 
-    string Create(Invoice invoice);
+    string Create(DbInvoice invoice);
 
     bool Remove(string id);
 }

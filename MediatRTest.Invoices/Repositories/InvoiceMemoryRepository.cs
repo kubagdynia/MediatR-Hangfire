@@ -2,22 +2,22 @@ using MediatRTest.Invoices.Models;
 
 namespace MediatRTest.Invoices.Repositories;
 
-public class InvoiceMemoryRepository(List<Invoice> initialInvoicesData) : IInvoiceRepository
+public class InvoiceMemoryRepository(List<DbInvoice> initialInvoicesData) : IInvoiceRepository
 {
     public InvoiceMemoryRepository() : this([])
     {
     }
 
-    public string Create(Invoice invoice)
+    public string Create(DbInvoice invoice)
     {
         initialInvoicesData.Add(invoice);
         return invoice.Id;
     }
 
-    public IEnumerable<Invoice> Get()
+    public IEnumerable<DbInvoice> Get()
         => initialInvoicesData;
 
-    public Invoice? Get(string id)
+    public DbInvoice? Get(string id)
         => initialInvoicesData.FirstOrDefault(c => c.Id == id);
 
     public bool Remove(string id)

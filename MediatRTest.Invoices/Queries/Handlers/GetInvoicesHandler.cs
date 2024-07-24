@@ -1,4 +1,5 @@
 using MediatR;
+using MediatRTest.Invoices.Extensions;
 using MediatRTest.Invoices.Repositories;
 
 namespace MediatRTest.Invoices.Queries.Handlers;
@@ -9,7 +10,7 @@ public class GetInvoicesHandler(IInvoiceRepository invoiceRepository) : IRequest
     {
         var response = new GetInvoicesQueryResponse
         {
-            Invoices = invoiceRepository.Get()
+            Invoices = invoiceRepository.Get().ToInvoices()
         };
 
         return Task.FromResult(response);

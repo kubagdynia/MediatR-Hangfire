@@ -14,9 +14,9 @@ public static class ServiceCollectionExtension
 
         services.AddSingleton<IInvoiceRepository>(c => new InvoiceMemoryRepository(
             [
-                new Invoice(id: Guid.NewGuid().ToString(), number: "J/1/2024", creationDate: new DateTime(2024, 10, 1)),
-                new Invoice(id: Guid.NewGuid().ToString(), number: "J/2/2024", creationDate: new DateTime(2024, 10, 25)),
-                new Invoice(id: Guid.NewGuid().ToString(), number: "J/3/2034", creationDate: new DateTime(2024, 11, 1))
+                new DbInvoice(Guid.NewGuid().ToString(), "J/1/2024", 150m,  new DateTime(2024, 10, 1)),
+                new DbInvoice(Guid.NewGuid().ToString(), "J/2/2024", 60.50m, new DateTime(2024, 10, 25)),
+                new DbInvoice(Guid.NewGuid().ToString(), "J/3/2034", 250.0m, new DateTime(2024, 11, 1))
             ]
         ));
 

@@ -7,7 +7,7 @@ namespace MediatRTest.Api.Invoices;
 
 public static class GetInvoices
 {
-    public record Response(string Id, string Number, DateTime CreationDate);
+    public record Response(string Id, string Number, decimal Amount, DateTime CreationDate);
     
     public sealed class Endpoint : IEndpoint
     {
@@ -23,7 +23,7 @@ public static class GetInvoices
                     }
 
                     return Results.Ok(result.Invoices
-                        .Select(i => new Response(i.Id.ToString(), i.Number!, i.CreationDate)).ToList());
+                        .Select(i => new Response(i.Id.ToString(), i.Number, i.Amount, i.CreationDate)).ToList());
                 })
                 .WithTags("Invoices")
                 .WithSummary("Returns a list of all invoices")

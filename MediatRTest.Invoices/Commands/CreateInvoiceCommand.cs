@@ -2,7 +2,7 @@ using MediatR;
 
 namespace MediatRTest.Invoices.Commands;
 
-public class CreateInvoiceCommand(string number, decimal amount, DateTime creationDate) : IRequest<CreateInvoiceCommandResponse>
+public sealed class CreateInvoiceCommand(string number, decimal amount, DateTime creationDate) : IRequest<CreateInvoiceCommandResponse>
 {
     public string Number { get; set; } = number;
 

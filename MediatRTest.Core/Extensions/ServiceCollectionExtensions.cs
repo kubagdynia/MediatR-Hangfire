@@ -1,10 +1,9 @@
 using System.Reflection;
 using FluentValidation;
-using MediatR;
 using MediatR.Pipeline;
 using MediatRTest.Core.Behaviors;
+using MediatRTest.Core.Logs;
 using MediatRTest.Core.Messages;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace MediatRTest.Core.Extensions;
 
@@ -36,8 +35,7 @@ public static class ServiceCollectionExtensions
             config.AddOpenBehavior(typeof(RequestPostProcessorBehavior<,>));
         });
         
-        //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-        //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
+        services.AddTransient(typeof(IRequestPostProcessor<,>), typeof(LoggingPostProcessor<,>));
         
         services.AddScoped<IMessageManager, MessageManager>();
 

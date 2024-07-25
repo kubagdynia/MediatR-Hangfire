@@ -2,7 +2,7 @@ using MediatRTest.Invoices.Models;
 
 namespace MediatRTest.Invoices.Repositories;
 
-public interface IInvoiceRepository
+internal interface IInvoiceRepository
 {
     IEnumerable<DbInvoice> Get();
 

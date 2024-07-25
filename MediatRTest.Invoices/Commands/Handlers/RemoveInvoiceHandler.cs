@@ -3,7 +3,7 @@ using MediatRTest.Invoices.Repositories;
 
 namespace MediatRTest.Invoices.Commands.Handlers;
 
-public class RemoveInvoiceHandler(IInvoiceRepository repository) : IRequestHandler<RemoveInvoiceCommand, RemoveInvoiceCommandResponse>
+internal sealed class RemoveInvoiceHandler(IInvoiceRepository repository) : IRequestHandler<RemoveInvoiceCommand, RemoveInvoiceCommandResponse>
 {
     public Task<RemoveInvoiceCommandResponse> Handle(RemoveInvoiceCommand request, CancellationToken cancellationToken)
     {

@@ -2,4 +2,4 @@ using MediatR;
 
 namespace MediatRTest.Invoices.Queries;
 
-public class GetInvoicesQuery : IRequest<GetInvoicesQueryResponse>;
+public sealed class GetInvoicesQuery : IRequest<GetInvoicesQueryResponse>;

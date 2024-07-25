@@ -31,5 +31,6 @@ public enum DomainErrorType
 {
     Error = 0,
     Warning = 1,
-    Info = 2
+    Info = 2,
+    ValidationError = 3
 }

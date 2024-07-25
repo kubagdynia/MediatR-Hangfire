@@ -2,7 +2,7 @@ using MediatRTest.Invoices.Models;
 
 namespace MediatRTest.Invoices.Repositories;
 
-public class InvoiceMemoryRepository(List<DbInvoice> initialInvoicesData) : IInvoiceRepository
+internal sealed class InvoiceMemoryRepository(List<DbInvoice> initialInvoicesData) : IInvoiceRepository
 {
     public InvoiceMemoryRepository() : this([])
     {

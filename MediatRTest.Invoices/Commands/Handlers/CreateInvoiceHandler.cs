@@ -4,7 +4,7 @@ using MediatRTest.Invoices.Repositories;
 
 namespace MediatRTest.Invoices.Commands.Handlers;
 
-public class CreateInvoiceHandler(IInvoiceRepository repository) : IRequestHandler<CreateInvoiceCommand, CreateInvoiceCommandResponse>
+internal sealed class CreateInvoiceHandler(IInvoiceRepository repository) : IRequestHandler<CreateInvoiceCommand, CreateInvoiceCommandResponse>
 {
     public Task<CreateInvoiceCommandResponse> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
     {

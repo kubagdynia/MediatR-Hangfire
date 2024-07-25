@@ -11,7 +11,7 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
     where TRequest : notnull
     where TResponse : BaseDomainResponse, new()
 {
-    public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var context = new ValidationContext<TRequest>(request);
         
@@ -26,7 +26,7 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
             ThrowValidationException(errors);
         }
 
-        return next();
+        return await next().ConfigureAwait(false);
     }
     
     private static void ThrowValidationException(IEnumerable<ValidationFailure> errors)
@@ -36,21 +36,9 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
         foreach (ValidationFailure error in errors)
         {
             exception.AddDomainError(error.ErrorCode, error.ErrorMessage, error.PropertyName, error.AttemptedValue,
-                typeof(TRequest).Name, GetErrorType(error.Severity));
+                typeof(TRequest).Name, DomainErrorType.ValidationError);
         }
 
         throw exception;
-    }
-    
-    private static DomainErrorType GetErrorType(Severity severity)
-    {
-        var errorType = severity switch
-        {
-            Severity.Error => DomainErrorType.Error,
-            Severity.Warning => DomainErrorType.Warning,
-            Severity.Info => DomainErrorType.Info,
-            _ => DomainErrorType.Error
-        };
-        return errorType;
     }
 }

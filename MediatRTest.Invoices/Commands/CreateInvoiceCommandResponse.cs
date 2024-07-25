@@ -2,7 +2,7 @@ using MediatRTest.Core.Responses.Domain;
 
 namespace MediatRTest.Invoices.Commands;
 
-public class CreateInvoiceCommandResponse : BaseDomainResponse
+public sealed class CreateInvoiceCommandResponse : BaseDomainResponse
 {
     public string Id { get; set; } = string.Empty;
 

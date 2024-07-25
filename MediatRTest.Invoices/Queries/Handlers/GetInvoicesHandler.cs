@@ -4,7 +4,7 @@ using MediatRTest.Invoices.Repositories;
 
 namespace MediatRTest.Invoices.Queries.Handlers;
 
-public class GetInvoicesHandler(IInvoiceRepository invoiceRepository) : IRequestHandler<GetInvoicesQuery, GetInvoicesQueryResponse>
+internal sealed class GetInvoicesHandler(IInvoiceRepository invoiceRepository) : IRequestHandler<GetInvoicesQuery, GetInvoicesQueryResponse>
 {
     public Task<GetInvoicesQueryResponse> Handle(GetInvoicesQuery request, CancellationToken cancellationToken)
     {

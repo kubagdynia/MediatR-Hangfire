@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MediatRTest.Core.Middlewares;
 
-public class ErrorHandlerMiddleware
+internal sealed class ErrorHandlerMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ErrorHandlerMiddleware> _logger;
@@ -45,11 +45,12 @@ public class ErrorHandlerMiddleware
 
             foreach (var error in domainException.DomainErrors)
             {
-                errors.Add(new Error {
-                    Code = error.ErrorCode,
-                    UserMessage = error.ErrorMessage,
-                    Details = $"Validation for '{error.PropertyName}' with value '{error.AttemptedValue}' failed in {error.ClassName}",
-                    Message = "Validation failed"});
+                errors.Add(new Error(
+                    Code: error.ErrorCode,
+                    Title: "Validation failed",
+                    UserMessage: error.ErrorMessage,
+                    Details: $"Validation for '{error.PropertyName}' with value '{error.AttemptedValue}' failed in {error.ClassName}"
+                    ));
             }
 
             if (errors.Any())
@@ -80,3 +81,5 @@ public class ErrorHandlerMiddleware
     private void LogException(Exception exception)
         => _logger.LogError(exception, $"Exception occured: {exception.Message}");
 }
+
+internal sealed record Error(string? Code, string? Title, string? Details, string? UserMessage);

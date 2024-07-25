@@ -2,7 +2,7 @@ using MediatR;
 
 namespace MediatRTest.Core.Messages;
 
-public class MessageManager(IMediator mediator) : IMessageManager
+internal sealed class MessageManager(IMediator mediator) : IMessageManager
 {
     /// <summary>
     /// Emit only once and almost immediately after creation. 

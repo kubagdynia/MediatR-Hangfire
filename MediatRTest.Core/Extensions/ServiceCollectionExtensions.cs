@@ -2,7 +2,7 @@ using System.Reflection;
 using FluentValidation;
 using MediatR.Pipeline;
 using MediatRTest.Core.Behaviors;
-using MediatRTest.Core.Logs;
+using MediatRTest.Core.Logging;
 using MediatRTest.Core.Messages;
 
 namespace MediatRTest.Core.Extensions;
@@ -25,6 +25,7 @@ public static class ServiceCollectionExtensions
         
         if (registerValidators)
         {
+            ValidatorOptions.Global.LanguageManager.Enabled = false;
             services.AddValidatorsFromAssemblies(assemblies);
         }
 

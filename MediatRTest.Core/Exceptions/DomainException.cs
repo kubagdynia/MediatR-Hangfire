@@ -1,14 +1,23 @@
 namespace MediatRTest.Core.Exceptions;
 
-public class DomainException(string message) : Exception(message)
+public class DomainException(string message, DomainExceptionType exceptionType = DomainExceptionType.Error) : Exception(message)
 {
     public IList<DomainError> DomainErrors { get; private set; } = new List<DomainError>();
+    
+    public DomainExceptionType ExceptionType { get; private set; } = exceptionType;
 
     public void AddDomainError(string errorCode, string errorMessage, string propertyName, object attemptedValue,
         string className = "", DomainErrorType errorType = DomainErrorType.Error)
     {
         DomainErrors.Add(new DomainError(errorCode, errorMessage, propertyName, attemptedValue, className, errorType));
     }
+}
+
+public enum DomainExceptionType
+{
+    Error = 0,
+    ValidationError,
+    Conflict
 }
 
 public class DomainError(
@@ -31,6 +40,5 @@ public enum DomainErrorType
 {
     Error = 0,
     Warning = 1,
-    Info = 2,
-    ValidationError = 3
+    Info = 2
 }

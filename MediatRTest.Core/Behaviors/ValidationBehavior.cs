@@ -13,14 +13,16 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var context = new ValidationContext<TRequest>(request);
+        if (!validators.Any()) return await next().ConfigureAwait(false);
         
+        var context = new ValidationContext<TRequest>(request);
+
         IEnumerable<ValidationFailure> errors = validators
             .Select(v => v.Validate(context))
             .SelectMany(result => result.Errors)
             .Where(error => error != null)
             .ToList();
-        
+
         if (errors.Any())
         {
             ThrowValidationException(errors);
@@ -31,14 +33,26 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
     
     private static void ThrowValidationException(IEnumerable<ValidationFailure> errors)
     {
-        var exception = new DomainException("Validation Error");
+        var exception = new DomainException("Validation Error", DomainExceptionType.ValidationError);
 
         foreach (ValidationFailure error in errors)
         {
             exception.AddDomainError(error.ErrorCode, error.ErrorMessage, error.PropertyName, error.AttemptedValue,
-                typeof(TRequest).Name, DomainErrorType.ValidationError);
+                typeof(TRequest).Name, GetErrorType(error.Severity));
         }
 
         throw exception;
+    }
+    
+    private static DomainErrorType GetErrorType(Severity severity)
+    {
+        var errorType = severity switch
+        {
+            Severity.Error => DomainErrorType.Error,
+            Severity.Warning => DomainErrorType.Warning,
+            Severity.Info => DomainErrorType.Info,
+            _ => DomainErrorType.Error
+        };
+        return errorType;
     }
 }

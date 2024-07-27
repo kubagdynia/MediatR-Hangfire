@@ -12,10 +12,12 @@ public static class CreateInvoice
     
     public sealed class Endpoint : IEndpoint
     {
+        // POST /invoices
         public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
         {
             endpointRouteBuilder.MapPost("invoices",  async (Request request, IMessageManager messageManager) =>
                 {
+                    // Create a new invoice
                     CreateInvoiceCommandResponse result =
                         await messageManager.SendCommand(
                             new CreateInvoiceCommand(request.Number, request.Amount, request.CreationDate));

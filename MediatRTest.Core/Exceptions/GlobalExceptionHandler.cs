@@ -13,6 +13,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         
         if (exception is DomainException domainException)
         {
+            // Handle domain exceptions
             var problemDetails = domainException.ExceptionType switch
             {
                 DomainExceptionType.ValidationError => ExecuteValidationError(httpContext, domainException),
@@ -39,7 +40,8 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
 
         return true;
     }
-
+    
+    // Execute validation error
     private static ProblemDetails ExecuteValidationError(HttpContext httpContext, DomainException domainException)
     {
         httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -54,6 +56,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         return problemDetails;
     }
     
+    // Execute conflict
     private static ProblemDetails ExecuteConflict(HttpContext httpContext, DomainException domainException)
     {
         httpContext.Response.StatusCode = StatusCodes.Status409Conflict;

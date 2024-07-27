@@ -1,6 +1,27 @@
-@MediatRTest.Api_HostAddress = http://localhost:5190
+@MediatRTest.Api_HostAddress = https://localhost:7251
 
-GET {{MediatRTest.Api_HostAddress}}/todo/
+### Get invoices
+
+GET {{MediatRTest.Api_HostAddress}}/api/v1/invoices
 Accept: application/json
 
-###
+### Get invoice by id
+
+GET {{MediatRTest.Api_HostAddress}}/api/v1/invoices/cbad2f35-7a04-466e-ae38-5f3b5369a324
+Accept: application/json
+
+### Creates a new invoice
+
+POST {{MediatRTest.Api_HostAddress}}/api/v1/invoices
+Content-Type: application/json
+
+{
+  "number": "INV/10/01/2024",
+  "amount": 150.5,
+  "creationDate": "2024-07-26T21:50:37.408Z"
+}
+
+### Deletes an invoice
+
+DELETE {{MediatRTest.Api_HostAddress}}/api/v1/invoices/cbad2f35-7a04-466e-ae38-5f3b5369a324
+Accept: application/json

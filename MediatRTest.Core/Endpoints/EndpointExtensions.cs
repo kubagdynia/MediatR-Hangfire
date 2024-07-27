@@ -19,6 +19,7 @@ public static class EndpointExtensions
             throw new ArgumentException(
                 "No assemblies found to scan. Supply at least one assembly to scan for endpoints.");
 
+        // Register all endpoints
         var serviceDescriptors = assemblies.Distinct()
             .SelectMany(a => a.DefinedTypes)
             .Where(type => type is { IsAbstract: false, IsInterface: false } &&
@@ -26,6 +27,7 @@ public static class EndpointExtensions
             .Select(type => ServiceDescriptor.Transient(typeof(IEndpoint), type))
             .ToArray();
         
+        // Add all endpoints to the service collection
         services.TryAddEnumerable(serviceDescriptors);
         return services;
     }
@@ -41,10 +43,12 @@ public static class EndpointExtensions
 
     public static IApplicationBuilder MapEndpoints(this WebApplication app, IEndpointRouteBuilder? routeGroupBuilder = null)
     {
+        // Get all endpoints
         var endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
-
+        
         var builder = routeGroupBuilder ?? app;
 
+        // Map all endpoints
         foreach (var endpoint in endpoints)
         {
             endpoint.MapEndpoint(builder);

@@ -4,6 +4,7 @@ using MediatRTest.Invoices.Repositories;
 
 namespace MediatRTest.Invoices.Commands.Handlers;
 
+// This handler is used to create a new invoice
 internal sealed class CreateInvoiceHandler(IInvoiceRepository repository) : IRequestHandler<CreateInvoiceCommand, CreateInvoiceCommandResponse>
 {
     public Task<CreateInvoiceCommandResponse> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)

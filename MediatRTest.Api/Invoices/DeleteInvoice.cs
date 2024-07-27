@@ -9,12 +9,16 @@ public static class DeleteInvoice
 {
     public sealed class Endpoint : IEndpoint
     {
+        // DELETE /invoices/{id}
         public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
         {
-            endpointRouteBuilder.MapDelete("invoices", async (string id, IMessageManager messageManager) =>
+            // Delete the invoice with the indicated id
+            endpointRouteBuilder.MapDelete("invoices/{id}", async (string id, IMessageManager messageManager) =>
             {
+                // Delete the invoice
                 RemoveInvoiceCommandResponse result = await messageManager.SendCommand(new RemoveInvoiceCommand(id));
                 
+                // If the invoice is not found, return 404 Not Found
                 return result.Removed ? Results.NoContent() : Results.NotFound("Not found");
             })
             .WithTags("Invoices")

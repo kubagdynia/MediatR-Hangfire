@@ -6,6 +6,7 @@ public class BaseDomainResponse
 
     public void AddError(string errorMessage)
     {
+        // Add error message to the list of errors
         Errors ??= new List<string>();
         Errors.Add(errorMessage);
     }

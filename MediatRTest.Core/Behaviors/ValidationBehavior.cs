@@ -17,12 +17,14 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
         
         var context = new ValidationContext<TRequest>(request);
 
+        // Validate the request
         IEnumerable<ValidationFailure> errors = validators
             .Select(v => v.Validate(context))
             .SelectMany(result => result.Errors)
             .Where(error => error != null)
             .ToList();
 
+        // If there are errors, throw a validation exception
         if (errors.Any())
         {
             ThrowValidationException(errors);
@@ -33,8 +35,10 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
     
     private static void ThrowValidationException(IEnumerable<ValidationFailure> errors)
     {
+        // Create a domain exception
         var exception = new DomainException("Validation Error", DomainExceptionType.ValidationError);
 
+        // Add domain errors
         foreach (ValidationFailure error in errors)
         {
             exception.AddDomainError(error.ErrorCode, error.ErrorMessage, error.PropertyName, error.AttemptedValue,
@@ -46,6 +50,7 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
     
     private static DomainErrorType GetErrorType(Severity severity)
     {
+        // Map severity to domain error type
         var errorType = severity switch
         {
             Severity.Error => DomainErrorType.Error,

@@ -11,17 +11,21 @@ public static class GetInvoices
     
     public sealed class Endpoint : IEndpoint
     {
+        // GET /invoices
         public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
         {
             endpointRouteBuilder.MapGet("invoices", async (IMessageManager messageManager) =>
                 {
+                    // Get all invoices
                     GetInvoicesQueryResponse result = await messageManager.SendCommand(new GetInvoicesQuery());
 
+                    // If there are no invoices, return 204 No Content
                     if (result.Invoices is null || !result.Invoices.Any())
                     {
                         return Results.NoContent();
                     }
 
+                    // Return the list of invoices
                     return Results.Ok(result.Invoices
                         .Select(i => new Response(i.Id.ToString(), i.Number, i.Amount, i.CreationDate)).ToList());
                 })

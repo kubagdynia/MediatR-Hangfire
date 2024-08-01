@@ -26,6 +26,7 @@ public static class GetInvoice
                     : Results.Ok(result.Invoice.ToInvoiceResponse());
             })
             .WithTags("Invoices")
+            .WithName("GetInvoice")
             .WithSummary("Returns the indicated invoice")
             .Produces<InvoiceResponse>()
             .Produces<NoContent>(StatusCodes.Status400BadRequest)

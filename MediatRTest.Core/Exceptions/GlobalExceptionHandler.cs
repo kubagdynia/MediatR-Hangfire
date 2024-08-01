@@ -51,7 +51,8 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
             title: "Validation Error",
             problemStatus: StatusCodes.Status400BadRequest,
             problemType: "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1",
-            detailMessage: error => $"Validation for '{error.PropertyName}' with value '{error.AttemptedValue}' failed in {error.ClassName}");
+            detailMessage: null);
+            //detailMessage: error => $"Validation for '{error.PropertyName}' with value '{error.AttemptedValue}' failed in {error.ClassName}");
 
         return problemDetails;
     }

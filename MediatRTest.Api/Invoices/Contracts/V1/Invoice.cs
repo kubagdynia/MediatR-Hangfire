@@ -1,9 +1,7 @@
-namespace MediatRTest.Invoices.Models;
+namespace MediatRTest.Api.Invoices.Contracts.V1;
 
 public record Invoice
 {
-    public string Id { get; init; } = string.Empty;
-    
     public string InvoiceNumber { get; init; } = string.Empty;
     
     public decimal Amount { get; init; }

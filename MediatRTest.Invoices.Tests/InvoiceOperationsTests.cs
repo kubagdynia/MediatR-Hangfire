@@ -3,6 +3,7 @@ using MediatR;
 using MediatRTest.Core.Exceptions;
 using MediatRTest.Core.Messages;
 using MediatRTest.Invoices.Commands;
+using MediatRTest.Invoices.Models;
 using MediatRTest.Invoices.Queries;
 using Microsoft.Extensions.DependencyInjection;
 using MediatRTest.Invoices.Tests.Fakes;
@@ -32,7 +33,7 @@ public class InvoiceOperationsTests
         for (var i = 0; i < count; i++)
         {
             CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommand(
-                new CreateInvoiceCommand(number: "FV/07/2024", amount: 123.5m, creationDate: DateTime.Now));
+                CreateFakeCreateInvoiceCommand());
             createInvoiceResponses.Add(createInvoiceResponse);
         }
 
@@ -46,7 +47,7 @@ public class InvoiceOperationsTests
         for (var i = 0; i < queryResponse.Invoices?.Count(); i++)
         {
             var repoInvoiceId = queryResponse.Invoices.ElementAt(i).Id;
-            var createdInvoiceId = createInvoiceResponses[i].Id;
+            var createdInvoiceId = createInvoiceResponses[i].Invoice?.Id;
 
             repoInvoiceId.Should().BeEquivalentTo(createdInvoiceId);
         }
@@ -73,16 +74,17 @@ public class InvoiceOperationsTests
         for (var i = 0; i < count; i++)
         {
             CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommand(
-                new CreateInvoiceCommand(number: "FV/07/2024", 123.1m,  creationDate: DateTime.Now));
+                CreateFakeCreateInvoiceCommand());
             createInvoiceResponses.Add(createInvoiceResponse);
         }
 
         // Assert
         foreach (var createdInvoice in createInvoiceResponses)
         {
-            GetInvoiceQueryResponse queryResponse = await messageManager.SendCommand(new GetInvoiceQuery(createdInvoice.Id));
+            GetInvoiceQueryResponse queryResponse =
+                await messageManager.SendCommand(new GetInvoiceQuery(createdInvoice.Invoice?.Id!));
             queryResponse.Invoice.Should().NotBeNull();
-            queryResponse.Invoice?.Id.Should().BeEquivalentTo(createdInvoice.Id);
+            queryResponse.Invoice?.Id.Should().BeEquivalentTo(createdInvoice.Invoice?.Id);
         }
     }
     
@@ -106,14 +108,14 @@ public class InvoiceOperationsTests
         for (var i = 0; i < count; i++)
         {
             CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommand(
-                new CreateInvoiceCommand(number: "FV/07/2024", 100m, creationDate: DateTime.Now));
+                CreateFakeCreateInvoiceCommand());
             createInvoiceResponses.Add(createInvoiceResponse);
         }
 
         // Assert
         foreach (var createdInvoice in createInvoiceResponses)
         {
-            RemoveInvoiceCommandResponse removeResponse = await messageManager.SendCommand(new RemoveInvoiceCommand(createdInvoice.Id));
+            RemoveInvoiceCommandResponse removeResponse = await messageManager.SendCommand(new RemoveInvoiceCommand(createdInvoice.Invoice?.Id!));
             removeResponse.Removed.Should().BeTrue();
         }
 
@@ -140,13 +142,12 @@ public class InvoiceOperationsTests
         // Act
         DomainException ex = Assert.ThrowsAsync<DomainException>(async () =>
         {
-            _ = await messageManager.SendCommand(
-                new CreateInvoiceCommand(number: invalidInvoiceNumber, 543.43m, creationDate: DateTime.Now));
+            _ = await messageManager.SendCommand(CreateFakeCreateInvoiceCommand(invalidInvoiceNumber));
         });
 
         ex.DomainErrors.Should().HaveCount(1);
         ex.DomainErrors.First().ErrorCode.Should().BeEquivalentTo("LengthValidator");
-        ex.DomainErrors.First().PropertyName.Should().BeEquivalentTo("Number");
+        ex.DomainErrors.First().PropertyName.Should().BeEquivalentTo("Invoice.InvoiceNumber");
 
         GetInvoicesQueryResponse result = await messageManager.SendCommand(new GetInvoicesQuery());
 
@@ -265,8 +266,7 @@ public class InvoiceOperationsTests
         // Act
         for (var i = 0; i < count; i++)
         {
-            await messageManager.SendCommand(
-                new CreateInvoiceCommand("FV/01/2024", 431.5m, creationDate: DateTime.Now));
+            await messageManager.SendCommand(CreateFakeCreateInvoiceCommand());
         }
 
         // Assert
@@ -310,4 +310,38 @@ public class InvoiceOperationsTests
         // The RemoveInvoiceCommandHandler should be called the same number of times as the RemoveInvoiceCommand
         counter.Get().Should().Be(count);
     }
+
+    private CreateInvoiceCommand CreateFakeCreateInvoiceCommand(string invoiceNumber = "FV/01/2024")
+        => new()
+        {
+            Invoice = new Invoice
+            {
+                InvoiceNumber = invoiceNumber,
+                Amount = 790.11m,
+                InvoiceDate = DateTime.Now,
+                DueDate = DateTime.Now.AddDays(30),
+                Currency = "USD",
+                Customer = new Customer
+                {
+                    Name = "John Doe",
+                    Address = "123 Main St"
+
+                },
+                Items = new List<InvoiceItem>
+                {
+                    new()
+                    {
+                        Description = "Item 1",
+                        Amount = 123.45m,
+                        Quantity = 2
+                    },
+                    new()
+                    {
+                        Description = "Item 2",
+                        Amount = 543.21m,
+                        Quantity = 1
+                    }
+                }
+            }
+        };
 }

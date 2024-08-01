@@ -7,8 +7,9 @@ public class CreateInvoiceCommandValidator : AbstractValidator<CreateInvoiceComm
 {
     public CreateInvoiceCommandValidator()
     {
-        RuleFor(c => c.Number).Length(5, 20);
-        RuleFor(c => c.Amount).GreaterThan(0);
-        RuleFor(c => c.CreationDate).GreaterThan(new DateTime(2024, 01, 01));//.WithMessage("{PropertyName} should be greather than {2024.01.01}");
+        RuleFor(c => c.Invoice).NotNull();
+        RuleFor(c => c.Invoice!.InvoiceNumber).Length(5, 20);
+        RuleFor(c => c.Invoice!.Amount).GreaterThan(0);
+        RuleFor(c => c.Invoice!.InvoiceDate).GreaterThan(new DateTime(2024, 01, 01));//.WithMessage("{PropertyName} should be greather than {2024.01.01}");
     }
 }

@@ -1,3 +1,5 @@
+using MediatRTest.Api.Invoices.Contracts.V1;
+using MediatRTest.Api.Invoices.Extensions;
 using MediatRTest.Core.Endpoints;
 using MediatRTest.Core.Messages;
 using MediatRTest.Invoices.Queries;
@@ -7,8 +9,6 @@ namespace MediatRTest.Api.Invoices;
 
 public static class GetInvoice
 {
-    public record Response(string Id, string Number, decimal Amount, DateTime CreationDate);
-    
     public sealed class Endpoint : IEndpoint
     {
         // GET /invoices/{id}
@@ -23,11 +23,11 @@ public static class GetInvoice
                 // If the invoice is not found, return 404 Not Found
                 return result.Invoice is null
                     ? Results.NotFound("Not found")
-                    : Results.Ok(new Response(result.Invoice.Id, result.Invoice.Number, result.Invoice.Amount, result.Invoice.CreationDate));
+                    : Results.Ok(result.Invoice.ToInvoiceResponse());
             })
             .WithTags("Invoices")
             .WithSummary("Returns the indicated invoice")
-            .Produces<Response>()
+            .Produces<InvoiceResponse>()
             .Produces<NoContent>(StatusCodes.Status400BadRequest)
             .Produces<NoContent>(StatusCodes.Status404NotFound);
         }

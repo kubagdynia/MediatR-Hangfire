@@ -1,5 +1,6 @@
 using MediatR;
 using MediatRTest.Invoices.Commands;
+using MediatRTest.Invoices.Models;
 
 namespace MediatRTest.Invoices.Tests.Fakes;
 
@@ -9,7 +10,7 @@ public class FakeCreateInvoiceHandler(Counter counter)
     public Task<CreateInvoiceCommandResponse> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
     {
         counter.Increment();
-        var result = new CreateInvoiceCommandResponse { Id = Guid.NewGuid().ToString() };
+        var result = new CreateInvoiceCommandResponse { Invoice = new Invoice { Id = Guid.NewGuid().ToString() } };
         return Task.FromResult(result);
 
     }

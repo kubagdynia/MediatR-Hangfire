@@ -1,3 +1,5 @@
+using MediatRTest.Api.Invoices.Contracts.V1;
+using MediatRTest.Api.Invoices.Extensions;
 using MediatRTest.Core.Endpoints;
 using MediatRTest.Core.Messages;
 using MediatRTest.Invoices.Queries;
@@ -7,8 +9,6 @@ namespace MediatRTest.Api.Invoices;
 
 public static class GetInvoices
 {
-    public record Response(string Id, string Number, decimal Amount, DateTime CreationDate);
-    
     public sealed class Endpoint : IEndpoint
     {
         // GET /invoices
@@ -27,11 +27,11 @@ public static class GetInvoices
 
                     // Return the list of invoices
                     return Results.Ok(result.Invoices
-                        .Select(i => new Response(i.Id.ToString(), i.Number, i.Amount, i.CreationDate)).ToList());
+                        .Select(i => i.ToInvoiceResponse()).ToList());
                 })
                 .WithTags("Invoices")
                 .WithSummary("Returns a list of all invoices")
-                .Produces<List<Response>>()
+                .Produces<List<InvoiceResponse>>()
                 .Produces<NoContent>(StatusCodes.Status204NoContent);
         }
     }

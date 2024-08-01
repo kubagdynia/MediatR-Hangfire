@@ -1,4 +1,4 @@
-using MediatRTest.Invoices.Models;
+using MediatRTest.Invoices.Models.Db;
 
 namespace MediatRTest.Invoices.Repositories;
 

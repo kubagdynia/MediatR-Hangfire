@@ -1,5 +1,5 @@
 using MediatR;
-using MediatRTest.Invoices.Models;
+using MediatRTest.Invoices.Extensions;
 using MediatRTest.Invoices.Repositories;
 
 namespace MediatRTest.Invoices.Commands.Handlers;
@@ -10,13 +10,12 @@ internal sealed class CreateInvoiceHandler(IInvoiceRepository repository) : IReq
     public Task<CreateInvoiceCommandResponse> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
     {
         var invoiceId = Guid.NewGuid().ToString();
-        
-        var invoice = new DbInvoice(invoiceId, request.Number, request.Amount, request.CreationDate);
-        
-        repository.Create(invoice);
 
-        var response = new CreateInvoiceCommandResponse
-            { Id = invoice.Id, Number = invoice.Number, Amount = invoice.Amount, CreationDate = invoice.CreationDate };
+        var dbInvoice = request.ToDbInvoice(invoiceId);
+        
+        repository.Create(dbInvoice);
+
+        var response = new CreateInvoiceCommandResponse{Invoice = dbInvoice.ToInvoice()};
 
         return Task.FromResult(response);
     }

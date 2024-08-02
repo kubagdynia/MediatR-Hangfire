@@ -1,5 +1,5 @@
 using MediatR;
-using MediatRTest.Invoices.Extensions;
+using MediatRTest.Invoices.Mappers;
 using MediatRTest.Invoices.Repositories;
 
 namespace MediatRTest.Invoices.Queries.Handlers;

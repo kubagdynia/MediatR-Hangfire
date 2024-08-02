@@ -2,7 +2,7 @@ using MediatRTest.Invoices.Commands;
 using MediatRTest.Invoices.Models;
 using MediatRTest.Invoices.Models.Db;
 
-namespace MediatRTest.Invoices.Extensions;
+namespace MediatRTest.Invoices.Mappers;
 
 internal static class InvoiceExtensions
 {

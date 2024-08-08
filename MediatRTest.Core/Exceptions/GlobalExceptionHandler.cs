@@ -5,8 +5,11 @@ namespace MediatRTest.Core.Exceptions;
 
 internal sealed record Error(string? Code, string? Title, string? Details, string? UserMessage);
 
+// Global exception handler is responsible for handling exceptions that occur in the application
+// It logs the exception and returns a ProblemDetails object with the appropriate status code and error message based on the exception type
 public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
+    // Try to handle the exception and return true if the exception was handled
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         logger.LogError(exception, $"Exception occured: {exception.Message}");
@@ -57,7 +60,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         return problemDetails;
     }
     
-    // Execute conflict
+    // Execute conflict error
     private static ProblemDetails ExecuteConflict(HttpContext httpContext, DomainException domainException)
     {
         httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
@@ -72,6 +75,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         return problemDetails;
     }
 
+    // Get problem details from domain exception
     private static ProblemDetails GetProblemDetails(DomainException domainException,
         string title, int problemStatus, string problemType,
         Func<DomainError, string>? detailMessage = null)
@@ -85,6 +89,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         
         var errors = new List<Error>();
         
+        // Add domain errors to the problem details
         foreach (var error in domainException.DomainErrors)
         {
             errors.Add(new Error(
@@ -95,6 +100,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
             ));
         }
         
+        // Add errors to the problem details extensions
         if (errors.Any())
         {
             problemDetails.Extensions = new Dictionary<string, object?>

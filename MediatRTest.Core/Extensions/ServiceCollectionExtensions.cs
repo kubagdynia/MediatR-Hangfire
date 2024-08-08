@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
             services.AddValidatorsFromAssemblies(assemblies);
         }
 
+        // Register MediatR and behaviors
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssemblies(assemblies);
@@ -36,6 +37,7 @@ public static class ServiceCollectionExtensions
             config.AddOpenBehavior(typeof(RequestPostProcessorBehavior<,>));
         });
         
+        // Register logging behavior for MediatR
         services.AddTransient(typeof(IRequestPostProcessor<,>), typeof(LoggingPostProcessor<,>));
         
         services.AddScoped<IMessageManager, MessageManager>();

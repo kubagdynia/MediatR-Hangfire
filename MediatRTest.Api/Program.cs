@@ -6,6 +6,7 @@ using MediatRTest.Invoices.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container for configuration and dependency injection
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", false, false)
@@ -15,17 +16,18 @@ builder.Configuration
 
 // Add services to the container.
 builder.Services
-    .AddEndpointsApiExplorer()
+    .AddEndpointsApiExplorer() // Add the endpoint API explorer
     .AddSwaggerGen(options => options.CustomSchemaIds(t => t.FullName?.Replace('+', '.')))
-    .AddExceptionHandler<GlobalExceptionHandler>()
-    .AddProblemDetails()
-    .AddEndpoints(Assembly.GetExecutingAssembly())
-    .AddInvoices(registerValidators: true)
+    .AddExceptionHandler<GlobalExceptionHandler>() // Add the global exception handler
+    .AddProblemDetails() // Add the problem details middleware
+    .AddEndpoints(Assembly.GetExecutingAssembly()) // Add the endpoints
+    .AddInvoices(registerValidators: true) // Add the invoices services
     .AddApiVersioning(options =>
     {
         options.DefaultApiVersion = new ApiVersion(1);
         options.ApiVersionReader = new UrlSegmentApiVersionReader();
-    }).AddApiExplorer(options =>
+    })
+    .AddApiExplorer(options =>
     {
         options.GroupNameFormat = "'v'V";
         options.SubstituteApiVersionInUrl = true;
@@ -33,17 +35,16 @@ builder.Services
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(); // Enable middleware to serve generated Swagger as a JSON endpoint.
+    app.UseSwaggerUI(); // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection(); // Redirect HTTP to HTTPS
 
-//app.UseErrorHandlerMiddleware();
-app.UseExceptionHandler();
+//app.UseErrorHandlerMiddleware(); // Use the error handler middleware
+app.UseExceptionHandler(); // Use the global exception handler
 
 var apiVersionSet = app.NewApiVersionSet()
     .HasApiVersion(new ApiVersion(1))

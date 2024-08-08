@@ -1,5 +1,6 @@
 namespace MediatRTest.Core.Exceptions;
 
+// Exception used to handle domain exceptions
 public class DomainException(string message, DomainExceptionType exceptionType = DomainExceptionType.Error) : Exception(message)
 {
     public IList<DomainError> DomainErrors { get; private set; } = new List<DomainError>();

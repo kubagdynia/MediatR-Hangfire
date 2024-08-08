@@ -6,6 +6,12 @@ using MediatRTest.Core.Responses.Domain;
 
 namespace MediatRTest.Core.Behaviors;
 
+// Validation behavior for MediatR requests
+// This behavior validates the request using FluentValidation
+// If there are errors, a domain exception is thrown
+// The domain exception contains the validation errors
+// The validation errors are added as domain errors
+// The domain errors are mapped from the FluentValidation validation failures
 public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull

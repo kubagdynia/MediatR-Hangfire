@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace MediatRTest.Invoices.Commands.Validators;
 
-// This validator is used to validate the CreateInvoiceCommand
+// This validator is used to validate the CreateInvoiceCommand before processing it in the CreateInvoiceHandler
 public class CreateInvoiceCommandValidator : AbstractValidator<CreateInvoiceCommand>
 {
     public CreateInvoiceCommandValidator()

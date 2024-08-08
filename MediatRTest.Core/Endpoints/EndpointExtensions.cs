@@ -41,6 +41,9 @@ public static class EndpointExtensions
     public static IServiceCollection AddEndpoints(this IServiceCollection services, Assembly assembly)
         => AddEndpoints(services, [assembly]);
 
+    /// <summary>
+    /// Scan executing assembly and registers endpoints. 
+    /// </summary>
     public static IApplicationBuilder MapEndpoints(this WebApplication app, IEndpointRouteBuilder? routeGroupBuilder = null)
     {
         // Get all endpoints

@@ -29,7 +29,8 @@ public static class GetInvoices
                     return Results.Ok(result.Invoices
                         .Select(i => i.ToInvoiceResponse()).ToList());
                 })
-                .WithTags("Invoices")
+                .WithTags(nameof(Invoices))
+                .WithName(nameof(GetInvoices))
                 .WithSummary("Returns a list of all invoices")
                 .Produces<List<InvoiceResponse>>()
                 .Produces<NoContent>(StatusCodes.Status204NoContent);

@@ -25,8 +25,8 @@ public static class GetInvoice
                     ? Results.NotFound("Not found")
                     : Results.Ok(result.Invoice.ToInvoiceResponse());
             })
-            .WithTags("Invoices")
-            .WithName("GetInvoice")
+            .WithTags(nameof(Invoices))
+            .WithName(nameof(GetInvoice))
             .WithSummary("Returns the indicated invoice")
             .Produces<InvoiceResponse>()
             .Produces<NoContent>(StatusCodes.Status400BadRequest)

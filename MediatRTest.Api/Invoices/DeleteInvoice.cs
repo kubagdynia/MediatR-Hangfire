@@ -21,7 +21,8 @@ public static class DeleteInvoice
                 // If the invoice is not found, return 404 Not Found
                 return result.Removed ? Results.NoContent() : Results.NotFound("Not found");
             })
-            .WithTags("Invoices")
+            .WithTags(nameof(Invoices))
+            .WithName(nameof(DeleteInvoice))
             .WithSummary("Deletes the indicated invoice")
             .Produces<NoContent>(StatusCodes.Status204NoContent)
             .Produces<NotFound>(StatusCodes.Status404NotFound);

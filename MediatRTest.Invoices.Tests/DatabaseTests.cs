@@ -1,8 +1,10 @@
+using System.Diagnostics;
 using FluentAssertions;
 using MediatRTest.Core.Messages;
 using MediatRTest.Data;
 using MediatRTest.Invoices.Commands;
 using MediatRTest.Invoices.Models;
+using MediatRTest.Invoices.Queries;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MediatRTest.Invoices.Tests;
@@ -11,7 +13,7 @@ namespace MediatRTest.Invoices.Tests;
 public class DatabaseTests
 {
     [Test]
-    public async Task CanInsertInvoiceIntoDatabase()
+    public async Task CanInsertInvoiceIntoDatabaseAndGetItBack()
     {
         var testConfiguration = new Dictionary<string, string?>
         {
@@ -33,16 +35,23 @@ public class DatabaseTests
         await dataContext.Database.EnsureCreatedAsync();
         
         var messageManager = scopedServices.GetRequiredService<IMessageManager>();
-        
-        List<CreateInvoiceCommandResponse> createInvoiceResponses = [];
 
         // Act
+        // Create a new invoice and add it to the database
         CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommand(
             CreateFakeCreateInvoiceCommand());
+        
+        string invoiceId = createInvoiceResponse.Invoice!.Id;
+        
+        // Get the invoice from the database using the ID
+        GetInvoiceQueryResponse queryResponse =
+            await messageManager.SendCommand(new GetInvoiceQuery(createInvoiceResponse.Invoice!.Id));
 
+        Debug.WriteLine($"Invoice ID: {invoiceId}");
+        
         // Assert
-        createInvoiceResponse.Invoice.Should().NotBeNull();
-        createInvoiceResponse.Invoice!.Id.Should().NotBeNullOrEmpty();
+        queryResponse.Invoice.Should().NotBeNull();
+        invoiceId.Should().Be(queryResponse.Invoice!.Id);
     }
     
     private CreateInvoiceCommand CreateFakeCreateInvoiceCommand(string invoiceNumber = "FV/01/2024")

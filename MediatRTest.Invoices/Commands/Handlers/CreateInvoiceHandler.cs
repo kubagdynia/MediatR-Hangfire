@@ -1,22 +1,27 @@
 using MediatR;
+using MediatRTest.Data;
 using MediatRTest.Invoices.Mappers;
-using MediatRTest.Invoices.Repositories;
 
 namespace MediatRTest.Invoices.Commands.Handlers;
 
 // This handler is used to create a new invoice
-internal sealed class CreateInvoiceHandler(IInvoiceRepository repository) : IRequestHandler<CreateInvoiceCommand, CreateInvoiceCommandResponse>
+internal sealed class CreateInvoiceHandler(DataContext dataContext) : IRequestHandler<CreateInvoiceCommand, CreateInvoiceCommandResponse>
 {
-    public Task<CreateInvoiceCommandResponse> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
+    public async Task<CreateInvoiceCommandResponse> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
     {
+        // Generate a new invoice ID
         var invoiceId = Guid.NewGuid().ToString();
 
-        var dbInvoice = request.ToDbInvoice(invoiceId);
+        // Convert the CreateInvoiceCommand to a DbInvoice
+        var invoice = request.ToDbInvoice(invoiceId);
         
-        repository.Create(dbInvoice);
-
-        var response = new CreateInvoiceCommandResponse{Invoice = dbInvoice.ToInvoice()};
-
-        return Task.FromResult(response);
+        // Add the invoice to the database
+        dataContext.Invoices.Add(invoice);
+        await dataContext.SaveChangesAsync(cancellationToken);
+        
+        // Return the invoice
+        var response = new CreateInvoiceCommandResponse{Invoice = invoice.ToInvoice()};
+        
+        return response;
     }
 }

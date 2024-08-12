@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Asp.Versioning;
 using MediatRTest.Core.Endpoints;
 using MediatRTest.Core.Exceptions;
@@ -21,7 +23,11 @@ builder.Services
     .AddExceptionHandler<GlobalExceptionHandler>() // Add the global exception handler
     .AddProblemDetails() // Add the problem details middleware
     .AddEndpoints(Assembly.GetExecutingAssembly()) // Add the endpoints
-    .AddInvoices(registerValidators: true) // Add the invoices services
+    .AddInvoices(builder.Configuration, registerValidators: true) // Add the invoices services
+    .ConfigureHttpJsonOptions(opt =>
+    {
+        opt.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    })
     .AddApiVersioning(options =>
     {
         options.DefaultApiVersion = new ApiVersion(1);
@@ -33,6 +39,7 @@ builder.Services
         options.SubstituteApiVersionInUrl = true;
     });
 
+// Build the application
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

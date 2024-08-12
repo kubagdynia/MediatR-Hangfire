@@ -4,9 +4,9 @@ public record InvoiceItem
 {
     public string Description { get; init; } = string.Empty;
     
-    public decimal Amount { get; init; }
+    public double Amount { get; init; }
     
     public int Quantity { get; init; }
     
-    public decimal Total => Amount * Quantity;
+    public double Total => Amount * Quantity;
 }

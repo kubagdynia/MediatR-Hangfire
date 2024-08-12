@@ -6,7 +6,7 @@ public record Invoice
     
     public string InvoiceNumber { get; init; } = string.Empty;
     
-    public decimal Amount { get; init; }
+    public double Amount { get; init; }
     
     // This is the date the invoice was created
     public DateTime InvoiceDate { get; init; }

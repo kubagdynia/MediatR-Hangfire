@@ -1,20 +1,27 @@
 using MediatR;
+using MediatRTest.Data;
 using MediatRTest.Invoices.Mappers;
-using MediatRTest.Invoices.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace MediatRTest.Invoices.Queries.Handlers;
 
 // This handler is used to get an invoice
-internal sealed class GetInvoiceHandler(IInvoiceRepository repository) : IRequestHandler<GetInvoiceQuery, GetInvoiceQueryResponse>
+internal sealed class GetInvoiceHandler(DataContext dataContext) : IRequestHandler<GetInvoiceQuery, GetInvoiceQueryResponse>
 {
-    public Task<GetInvoiceQueryResponse> Handle(GetInvoiceQuery request, CancellationToken cancellationToken)
+    public async Task<GetInvoiceQueryResponse> Handle(GetInvoiceQuery request, CancellationToken cancellationToken)
     {
+        // Get the invoice from the database
+        var invoice = await dataContext.Invoices.Include(i => i.Items)
+            .Include(c => c.Customer)
+            .FirstOrDefaultAsync(c => c.BussinsId == request.Id, cancellationToken: cancellationToken);
+        
+        // Return the result
         var response = new GetInvoiceQueryResponse
         {
             // Get the invoice from the repository and convert it to an Invoice
-            Invoice = repository.Get(request.Id)?.ToInvoice()
+            Invoice = invoice?.ToInvoice()
         };
 
-        return Task.FromResult(response);
+        return response;
     }
 }

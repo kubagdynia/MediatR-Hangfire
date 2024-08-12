@@ -17,6 +17,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\MediatRTest.Core\MediatRTest.Core.csproj" />
+    <ProjectReference Include="..\MediatRTest.Data\MediatRTest.Data.csproj" />
   </ItemGroup>
 
 </Project>

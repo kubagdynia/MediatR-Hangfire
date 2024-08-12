@@ -1,6 +1,7 @@
 using MediatRTest.Invoices.Commands;
-using MediatRTest.Invoices.Models;
-using MediatRTest.Invoices.Models.Db;
+using Customer = MediatRTest.Data.Models.Customer;
+using Invoice = MediatRTest.Data.Models.Invoice;
+using InvoiceItem = MediatRTest.Data.Models.InvoiceItem;
 
 namespace MediatRTest.Invoices.Mappers;
 
@@ -9,21 +10,21 @@ internal static class InvoiceExtensions
     // Object mapping can also be done using, for example, the Autofac library.
     
     // This extension method is used to convert a DbInvoice to an Invoice
-    public static Invoice ToInvoice(this DbInvoice dbInvoice)
+    public static Models.Invoice ToInvoice(this Invoice invoice)
         => new()
         {
-            Id = dbInvoice.Id,
-            InvoiceNumber = dbInvoice.InvoiceNumber,
-            Amount = dbInvoice.Amount,
-            InvoiceDate = dbInvoice.InvoiceDate,
-            DueDate = dbInvoice.DueDate,
-            Currency = dbInvoice.Currency,
-            Customer = new Customer
+            Id = invoice.BussinsId,
+            InvoiceNumber = invoice.InvoiceNumber,
+            Amount = invoice.Amount,
+            InvoiceDate = invoice.InvoiceDate,
+            DueDate = invoice.DueDate,
+            Currency = invoice.Currency,
+            Customer = new Models.Customer
             {
-                Name = dbInvoice.Customer.Name,
-                Address = dbInvoice.Customer.Address
+                Name = invoice.Customer.Name,
+                Address = invoice.Customer.Address
             },
-            Items = dbInvoice.Items.Select(item => new InvoiceItem
+            Items = invoice.Items.Select(item => new Models.InvoiceItem
             {
                 Description = item.Description,
                 Amount = item.Amount,
@@ -32,30 +33,30 @@ internal static class InvoiceExtensions
         };
     
     // This extension method is used to convert a collection of DbInvoices to a collection of Invoices
-    public static IEnumerable<Invoice> ToInvoices(this IEnumerable<DbInvoice> dbInvoices) =>
+    public static IEnumerable<Models.Invoice> ToInvoices(this IEnumerable<Invoice> dbInvoices) =>
         dbInvoices.Select(i => i.ToInvoice()).ToList();
     
     // This extension method is used to convert an Invoice to a DbInvoice
-    public static DbInvoice ToDbInvoice(this CreateInvoiceCommand cmd, string invoiceId)
+    public static Invoice ToDbInvoice(this CreateInvoiceCommand cmd, string invoiceId)
         => new()
         {
-            Id = invoiceId,
+            BussinsId = invoiceId,
             InvoiceNumber = cmd.Invoice!.InvoiceNumber,
             Amount = cmd.Invoice.Amount,
             InvoiceDate = cmd.Invoice.InvoiceDate,
             DueDate = cmd.Invoice.DueDate,
             Currency = cmd.Invoice.Currency,
-            Customer = new DbCustomer
+            Customer = new Customer
             {
                 Name = cmd.Invoice.Customer.Name,
                 Address = cmd.Invoice.Customer.Address
 
             },
-            Items = cmd.Invoice.Items.Select(item => new DbInvoiceItem
+            Items = cmd.Invoice.Items.Select(item => new InvoiceItem
             {
                 Description = item.Description,
                 Amount = item.Amount,
                 Quantity = item.Quantity,
-            })
+            }).ToList()
         };
 }

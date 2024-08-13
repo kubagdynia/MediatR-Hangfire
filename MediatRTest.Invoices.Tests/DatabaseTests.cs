@@ -1,7 +1,5 @@
-using System.Diagnostics;
 using FluentAssertions;
 using MediatRTest.Core.Messages;
-using MediatRTest.Data;
 using MediatRTest.Invoices.Commands;
 using MediatRTest.Invoices.Models;
 using MediatRTest.Invoices.Queries;
@@ -15,25 +13,13 @@ public class DatabaseTests
     [Test]
     public async Task CanInsertInvoiceIntoDatabaseAndGetItBack()
     {
-        var testConfiguration = new Dictionary<string, string?>
-        {
-            {"Logging:LogLevel:Microsoft.EntityFrameworkCore.Database.Command", "Information"},
-            {"DatabaseOptions:ConnectionString", "Data Source=sqlite.db"},
-            {"DatabaseOptions:CommandTimeout", "10"},
-            {"DatabaseOptions:EnableSensitiveDataLogging", "true"},
-            {"DatabaseOptions:EnableDetailedErrors", "true"}
-        };
-        // Arrange
-        ServiceProvider serviceProvider = TestHelper.PrepareServiceProvider(testConfiguration);
+        var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
 
         using var scope = serviceProvider.CreateScope();
         var scopedServices = scope.ServiceProvider;
         
-        var dataContext = scopedServices.GetRequiredService<DataContext>();
-        
-        await dataContext.Database.EnsureDeletedAsync();
-        await dataContext.Database.EnsureCreatedAsync();
-        
+        await TestHelper.SetUpDatabase(scopedServices);
+
         var messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
         // Act
@@ -46,14 +32,12 @@ public class DatabaseTests
         // Get the invoice from the database using the ID
         GetInvoiceQueryResponse queryResponse =
             await messageManager.SendCommand(new GetInvoiceQuery(createInvoiceResponse.Invoice!.Id));
-
-        Debug.WriteLine($"Invoice ID: {invoiceId}");
         
         // Assert
         queryResponse.Invoice.Should().NotBeNull();
         invoiceId.Should().Be(queryResponse.Invoice!.Id);
     }
-    
+
     private CreateInvoiceCommand CreateFakeCreateInvoiceCommand(string invoiceNumber = "FV/01/2024")
         => new()
         {

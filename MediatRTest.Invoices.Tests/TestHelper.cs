@@ -1,4 +1,5 @@
 using MediatRTest.Core.Exceptions;
+using MediatRTest.Data;
 using MediatRTest.Invoices.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,14 +8,14 @@ namespace MediatRTest.Invoices.Tests;
 
 public static class TestHelper
 {
-    public static ServiceProvider PrepareServiceProvider(Dictionary<string, string?>? config = null)
+    internal static ServiceProvider PrepareServiceProvider(Dictionary<string, string?>? config = null)
     {
         ServiceCollection services = PrepareServiceCollection(config);
         ServiceProvider serviceProvider = services.BuildServiceProvider();
         return serviceProvider;
     }
     
-    public static ServiceCollection PrepareServiceCollection(Dictionary<string, string?>? config = null)
+    internal static ServiceCollection PrepareServiceCollection(Dictionary<string, string?>? config = null)
     {
         var services = new ServiceCollection();
 
@@ -32,7 +33,7 @@ public static class TestHelper
         return services;
     }
     
-    public static Dictionary<string, string?> GetDefaultConfiguration()
+    internal static Dictionary<string, string?> GetDefaultConfiguration()
     {
         return new Dictionary<string, string?>
         {
@@ -42,5 +43,29 @@ public static class TestHelper
             {"DatabaseOptions:EnableSensitiveDataLogging", "true"},
             {"DatabaseOptions:EnableDetailedErrors", "true"}
         };
+    }
+    
+    internal static async Task SetUpDatabase(IServiceProvider scopedServices)
+    {
+        var dataContext = scopedServices.GetRequiredService<DataContext>();
+        await dataContext.Database.EnsureCreatedAsync();
+    }
+    
+    internal static ServiceProvider SetUpServiceProviderWithDefaultInMemoryDatabase()
+    {
+        // Set up the configuration for the test
+        // This configuration will use an in-memory database
+        var testConfiguration = new Dictionary<string, string?>
+        {
+            {"Logging:LogLevel:Microsoft.EntityFrameworkCore.Database.Command", "Information"},
+            {"DatabaseOptions:ConnectionString", "Data Source=sqlite.db"},
+            {"DatabaseOptions:InMemoryDatabase", "true"},
+            {"DatabaseOptions:CommandTimeout", "10"},
+            {"DatabaseOptions:EnableSensitiveDataLogging", "false"},
+            {"DatabaseOptions:EnableDetailedErrors", "false"}
+        };
+        
+        var serviceProvider = PrepareServiceProvider(testConfiguration);
+        return serviceProvider;
     }
 }

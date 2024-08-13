@@ -1,4 +1,5 @@
 using MediatRTest.Data.Options;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,13 +15,29 @@ public static class ServiceCollectionExtension
         
         services.AddDbContext<DataContext>(options =>
         {
-            options.UseSqlite(databaseOptions.ConnectionString, optBuilder =>
+            // Use an in-memory database for testing
+            if (databaseOptions.InMemoryDatabase)
             {
-                optBuilder.CommandTimeout(databaseOptions.CommandTimeout);
-            })
-            .EnableDetailedErrors(databaseOptions.EnableDetailedErrors)
-            .EnableSensitiveDataLogging(databaseOptions.EnableSensitiveDataLogging)
-            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                var connectionString = new SqliteConnection("Filename=:memory:");
+                connectionString.Open();
+                options.UseSqlite(connectionString, optBuilder =>
+                {
+                    optBuilder.CommandTimeout(databaseOptions.CommandTimeout);
+                });
+            }
+            else
+            {
+                // Use a SQLite database for production
+                options.UseSqlite(databaseOptions.ConnectionString, optBuilder =>
+                {
+                    optBuilder.CommandTimeout(databaseOptions.CommandTimeout);
+                });
+            }
+
+            options
+                .EnableDetailedErrors(databaseOptions.EnableDetailedErrors)
+                .EnableSensitiveDataLogging(databaseOptions.EnableSensitiveDataLogging)
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
         return services;

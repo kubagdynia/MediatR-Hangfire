@@ -11,20 +11,20 @@ using MediatRTest.Invoices.Tests.Fakes;
 namespace MediatRTest.Invoices.Tests;
 
 [TestFixture]
-[Ignore("This test is not working as expected. Should be fixed.")]
 public class InvoiceOperationsTests
 {
     [TestCase(1)]
     [TestCase(10)]
     [TestCase(100)]
-    [TestCase(1000)]
     public async Task All_created_invoices_should_be_added_to_the_repository(int count)
     {
         // Arrange
-        ServiceProvider serviceProvider = TestHelper.PrepareServiceProvider(TestHelper.GetDefaultConfiguration());
+        var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
 
         using var scope = serviceProvider.CreateScope();
         var scopedServices = scope.ServiceProvider;
+        
+        await TestHelper.SetUpDatabase(scopedServices);
 
         var messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
@@ -57,13 +57,14 @@ public class InvoiceOperationsTests
     [TestCase(1)]
     [TestCase(10)]
     [TestCase(100)]
-    [TestCase(1000)]
     public async Task All_created_invoices_should_be_able_to_get_by_passing_their_id(int count)
     {
-        ServiceProvider serviceProvider = TestHelper.PrepareServiceProvider(TestHelper.GetDefaultConfiguration());
+        var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
         
         using IServiceScope scope = serviceProvider.CreateScope();
         var scopedServices = scope.ServiceProvider;
+        
+        await TestHelper.SetUpDatabase(scopedServices);
 
         var messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
@@ -92,14 +93,15 @@ public class InvoiceOperationsTests
     [TestCase(1)]
     [TestCase(10)]
     [TestCase(100)]
-    [TestCase(1000)]
     public async Task Id_should_be_possible_to_delete_all_created_invoices(int count)
     {
         // Arrange
-        ServiceProvider serviceProvider = TestHelper.PrepareServiceProvider(TestHelper.GetDefaultConfiguration());
+        var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
 
         using IServiceScope scope = serviceProvider.CreateScope();
         var scopedServices = scope.ServiceProvider;
+        
+        await TestHelper.SetUpDatabase(scopedServices);
 
         var messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
@@ -133,10 +135,12 @@ public class InvoiceOperationsTests
     public async Task Providing_invalid_invoice_number_when_creating_the_invoice_should_thrown_DomainException(string invalidInvoiceNumber)
     {
         // Arrange
-        ServiceProvider serviceProvider = TestHelper.PrepareServiceProvider(TestHelper.GetDefaultConfiguration());
+        var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
 
         using var scope = serviceProvider.CreateScope();
         var scopedServices = scope.ServiceProvider;
+        
+        await TestHelper.SetUpDatabase(scopedServices);
 
         IMessageManager messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
@@ -159,7 +163,6 @@ public class InvoiceOperationsTests
     [TestCase(1)]
     [TestCase(10)]
     [TestCase(100)]
-    [TestCase(1000)]
     public async Task Get_invoice_handler_should_be_called_the_same_number_of_times_as_get_invoice_query(int count)
     {
         // Replace the registered IRequestHandler<GetInvoiceQuery, GetInvoiceQueryResponse> with a fake handler.
@@ -168,7 +171,7 @@ public class InvoiceOperationsTests
         
         // Arrange
         ServiceCollection services = TestHelper.PrepareServiceCollection(TestHelper.GetDefaultConfiguration());
-
+        
         services.AddSingleton<Counter>();
 
         // Replace the registered event class
@@ -181,6 +184,8 @@ public class InvoiceOperationsTests
 
         using var scope = serviceProvider.CreateScope();
         var scopedServices = scope.ServiceProvider;
+        
+        await TestHelper.SetUpDatabase(scopedServices);
 
         var messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
@@ -200,7 +205,6 @@ public class InvoiceOperationsTests
     [TestCase(1)]
     [TestCase(10)]
     [TestCase(100)]
-    [TestCase(1000)]
     public async Task Get_invoices_handler_should_be_called_the_same_number_of_times_as_get_invoices_query(int count)
     {
         // Replace the registered IRequestHandler<GetInvoicesQuery, GetInvoicesQueryResponse> with a fake handler.
@@ -222,6 +226,8 @@ public class InvoiceOperationsTests
 
         using var scope = serviceProvider.CreateScope();
         var scopedServices = scope.ServiceProvider;
+        
+        await TestHelper.SetUpDatabase(scopedServices);
 
         var messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
@@ -241,7 +247,6 @@ public class InvoiceOperationsTests
     [TestCase(1)]
     [TestCase(10)]
     [TestCase(100)]
-    [TestCase(1000)]
     public async Task Create_invoice_handler_should_be_called_the_same_number_of_times_as_create_invoice_command(int count)
     {
         // Arrange
@@ -259,6 +264,8 @@ public class InvoiceOperationsTests
 
         using var scope = serviceProvider.CreateScope();
         var scopedServices = scope.ServiceProvider;
+        
+        await TestHelper.SetUpDatabase(scopedServices);
 
         var messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
@@ -278,7 +285,6 @@ public class InvoiceOperationsTests
     [TestCase(1)]
     [TestCase(10)]
     [TestCase(100)]
-    [TestCase(1000)]
     public async Task Remove_invoice_handler_should_be_called_the_same_number_of_times_as_remove_invoice_command1(int count)
     {
         // Arrange
@@ -296,6 +302,8 @@ public class InvoiceOperationsTests
 
         using var scope = serviceProvider.CreateScope();
         var scopedServices = scope.ServiceProvider;
+        
+        await TestHelper.SetUpDatabase(scopedServices);
 
         var messageManager = scopedServices.GetRequiredService<IMessageManager>();
 

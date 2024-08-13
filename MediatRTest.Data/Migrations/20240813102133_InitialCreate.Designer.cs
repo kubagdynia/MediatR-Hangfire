@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MediatRTest.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240811095602_initial")]
-    partial class initial
+    [Migration("20240813102133_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,20 +37,6 @@ namespace MediatRTest.Data.Migrations
                     b.HasKey("CustomerId");
 
                     b.ToTable("Customers");
-
-                    b.HasData(
-                        new
-                        {
-                            CustomerId = 1,
-                            Address = "Address 1",
-                            Name = "Customer 1"
-                        },
-                        new
-                        {
-                            CustomerId = 2,
-                            Address = "Address 2",
-                            Name = "Customer 2"
-                        });
                 });
 
             modelBuilder.Entity("MediatRTest.Data.Models.Invoice", b =>
@@ -91,41 +77,6 @@ namespace MediatRTest.Data.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Invoices");
-
-                    b.HasData(
-                        new
-                        {
-                            InvoiceId = 1,
-                            Amount = 100.0,
-                            BussinsId = "a9be413b-8ec3-4156-bd5c-07c17f1928ea",
-                            Currency = "USD",
-                            CustomerId = 1,
-                            DueDate = new DateTime(2024, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceDate = new DateTime(2024, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceNumber = "FV/01/2024"
-                        },
-                        new
-                        {
-                            InvoiceId = 2,
-                            Amount = 200.0,
-                            BussinsId = "f7a8356e-41a7-4801-987e-a35b9fed2e6f",
-                            Currency = "USD",
-                            CustomerId = 1,
-                            DueDate = new DateTime(2024, 9, 10, 0, 0, 0, 0, DateTimeKind.Local),
-                            InvoiceDate = new DateTime(2024, 8, 11, 0, 0, 0, 0, DateTimeKind.Local),
-                            InvoiceNumber = "FV/02/2024"
-                        },
-                        new
-                        {
-                            InvoiceId = 3,
-                            Amount = 500.5,
-                            BussinsId = "b8662e75-66f4-4cca-96f2-79b33b4db655",
-                            Currency = "USD",
-                            CustomerId = 2,
-                            DueDate = new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceDate = new DateTime(2024, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            InvoiceNumber = "FV/03/2024"
-                        });
                 });
 
             modelBuilder.Entity("MediatRTest.Data.Models.InvoiceItem", b =>
@@ -152,48 +103,6 @@ namespace MediatRTest.Data.Migrations
                     b.HasIndex("InvoiceId");
 
                     b.ToTable("InvoiceItems");
-
-                    b.HasData(
-                        new
-                        {
-                            InvoiceItemId = 1,
-                            Amount = 50.0,
-                            Description = "Item 1",
-                            InvoiceId = 1,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            InvoiceItemId = 2,
-                            Amount = 25.0,
-                            Description = "Item 2",
-                            InvoiceId = 1,
-                            Quantity = 2
-                        },
-                        new
-                        {
-                            InvoiceItemId = 3,
-                            Amount = 200.0,
-                            Description = "Item 1",
-                            InvoiceId = 2,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            InvoiceItemId = 4,
-                            Amount = 200.5,
-                            Description = "Item 1",
-                            InvoiceId = 3,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            InvoiceItemId = 5,
-                            Amount = 300.0,
-                            Description = "Item 2",
-                            InvoiceId = 3,
-                            Quantity = 1
-                        });
                 });
 
             modelBuilder.Entity("MediatRTest.Data.Models.Invoice", b =>

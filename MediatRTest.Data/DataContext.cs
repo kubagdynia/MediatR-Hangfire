@@ -29,6 +29,9 @@ public class DataContext : DbContext
             .HasMany(i => i.Items)
             .WithOne()
             .HasForeignKey(item => item.InvoiceId).OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Invoice>()
+            .Property<DateTime>("LastUpdated");
 
         // Seed data - moved to a separate migration
         // modelBuilder.Entity<Customer>().HasData(
@@ -114,5 +117,19 @@ public class DataContext : DbContext
         //         Quantity = 1
         //     }
         // );
+    }
+
+    public override int SaveChanges()
+    {
+        UpdateAuditData();
+        return base.SaveChanges();
+    }
+
+    private void UpdateAuditData()
+    {
+        foreach (var entry in ChangeTracker.Entries<Invoice>())
+        {
+            entry.Property("LastUpdated").CurrentValue = DateTime.Now;
+        }
     }
 }

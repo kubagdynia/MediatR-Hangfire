@@ -11,7 +11,11 @@ public class DataContext : DbContext
 
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
-        
+        // Using SavinChanges & Shadow properties to update the LastUpdated property
+        SavingChanges += (_, _) =>
+        {
+            UpdateAuditData();
+        };
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -118,13 +122,7 @@ public class DataContext : DbContext
         //     }
         // );
     }
-
-    public override int SaveChanges()
-    {
-        UpdateAuditData();
-        return base.SaveChanges();
-    }
-
+    
     private void UpdateAuditData()
     {
         foreach (var entry in ChangeTracker.Entries<Invoice>())

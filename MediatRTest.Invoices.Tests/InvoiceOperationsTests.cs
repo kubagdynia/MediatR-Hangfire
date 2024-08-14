@@ -285,7 +285,7 @@ public class InvoiceOperationsTests
     [TestCase(1)]
     [TestCase(10)]
     [TestCase(100)]
-    public async Task Remove_invoice_handler_should_be_called_the_same_number_of_times_as_remove_invoice_command1(int count)
+    public async Task Remove_invoice_handler_should_be_called_the_same_number_of_times_as_remove_invoice_command(int count)
     {
         // Arrange
         ServiceCollection services = TestHelper.PrepareServiceCollection(TestHelper.GetDefaultConfiguration());

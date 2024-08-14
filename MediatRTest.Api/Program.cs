@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
 using MediatRTest.Core.Endpoints;
@@ -65,3 +64,5 @@ var versionedGroup = app
 app.MapEndpoints(versionedGroup);
 
 app.Run();
+
+public partial class Program;

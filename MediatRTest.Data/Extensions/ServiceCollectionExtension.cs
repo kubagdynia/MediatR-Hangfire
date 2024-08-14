@@ -1,3 +1,4 @@
+using System.Data.Common;
 using MediatRTest.Data.Options;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -13,14 +14,25 @@ public static class ServiceCollectionExtension
         var databaseOptions = config.GetSection("DatabaseOptions").Get<DatabaseOptions>() ??
                               throw new Exception("DatabaseOptions not found in configuration");
         
-        services.AddDbContext<DataContext>(options =>
+        if (databaseOptions.InMemoryDatabase)
+        {
+            // Create open SqliteConnection so EF won't automatically close it.
+            services.AddSingleton<DbConnection>(container =>
+            {
+                var connection = new SqliteConnection("DataSource=:memory:");
+                connection.Open();
+
+                return connection;
+            });
+        }
+        
+        services.AddDbContext<DataContext>((container, options) =>
         {
             // Use an in-memory database for testing
             if (databaseOptions.InMemoryDatabase)
             {
-                var connectionString = new SqliteConnection("Filename=:memory:");
-                connectionString.Open();
-                options.UseSqlite(connectionString, optBuilder =>
+                var connection = container.GetRequiredService<DbConnection>();
+                options.UseSqlite(connection, optBuilder =>
                 {
                     optBuilder.CommandTimeout(databaseOptions.CommandTimeout);
                 });

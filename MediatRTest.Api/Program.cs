@@ -3,7 +3,9 @@ using System.Text.Json.Serialization;
 using Asp.Versioning;
 using MediatRTest.Core.Endpoints;
 using MediatRTest.Core.Exceptions;
+using MediatRTest.Data;
 using MediatRTest.Invoices.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +47,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger(); // Enable middleware to serve generated Swagger as a JSON endpoint.
     app.UseSwaggerUI(); // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+    
+    // Create the database if it doesn't exist and apply any pending migration.
+    using var scope = app.Services.CreateScope();
+    var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+    dataContext.Database.Migrate();
 }
 
 app.UseHttpsRedirection(); // Redirect HTTP to HTTPS

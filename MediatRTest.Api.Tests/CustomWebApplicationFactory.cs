@@ -10,6 +10,7 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
     {
         builder.ConfigureServices(services =>
         {
+            // https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-8.0#customize-webapplicationfactory
             // Remove the existing ApplicationDbContext registration and replace it with a SQLite in-memory database.
             // Commented out because by default we use an in-memory database, which is set in the configuration
             
@@ -53,6 +54,6 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
         var configuration = new ConfigurationBuilder().AddInMemoryCollection(testConfiguration).Build();
         builder.UseConfiguration(configuration);
 
-        builder.UseEnvironment("Development");
+        builder.UseEnvironment("Production"); // Development, Staging, or Production
     }
 }

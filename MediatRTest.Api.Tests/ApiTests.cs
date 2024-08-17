@@ -2,9 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using MediatRTest.Api.Invoices.Contracts.V1;
-using MediatRTest.Data;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace MediatRTest.Api.Tests;
 
@@ -18,7 +15,7 @@ public class ApiTests
     public void Init()
     {
         _application = new CustomWebApplicationFactory<Program>();
-        CreateAndSeedDatabase(_application);
+        TestHelper.CreateAndSeedDatabase(_application);
     }
     
     [OneTimeTearDown]
@@ -179,13 +176,5 @@ public class ApiTests
         getResponse.IsSuccessStatusCode.Should().BeTrue();
         var content = await getResponse.Content.ReadAsStringAsync();
         content.Should().BeEmpty();
-    }
-    
-    private static async void CreateAndSeedDatabase(WebApplicationFactory<Program> appFactory)
-    {
-        using var scope = appFactory.Services.CreateScope();
-        var scopedServices = scope.ServiceProvider;
-        var dataContext = scopedServices.GetRequiredService<DataContext>();
-        await dataContext.Database.EnsureCreatedAsync();
     }
 }

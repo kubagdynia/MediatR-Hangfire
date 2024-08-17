@@ -37,6 +37,8 @@ public static class ServiceCollectionExtensions
             config.AddOpenBehavior(typeof(RequestPostProcessorBehavior<,>));
         });
         
+        //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        
         // Register logging behavior for MediatR
         services.AddTransient(typeof(IRequestPostProcessor<,>), typeof(LoggingPostProcessor<,>));
         

@@ -7,7 +7,7 @@ Accept: application/json
 
 ### Get invoice by id
 
-GET {{MediatRTest.Api_HostAddress}}/api/v1/invoices/cbad2f35-7a04-466e-ae38-5f3b5369a324
+GET {{MediatRTest.Api_HostAddress}}/api/v1/invoices/0c14cfbd-e8ff-4dba-8931-2d4e7a1f32df
 Accept: application/json
 
 ### Creates a new invoice
@@ -16,12 +16,30 @@ POST {{MediatRTest.Api_HostAddress}}/api/v1/invoices
 Content-Type: application/json
 
 {
-  "number": "INV/10/01/2024",
-  "amount": 150.5,
-  "creationDate": "2024-07-26T21:50:37.408Z"
+  "invoiceNumber": "FV/101/2024",
+  "amount": 100,
+  "invoiceDate": "2024-08-18T10:52:10.610Z",
+  "dueDate": "2024-09-18T10:52:10.610Z",
+  "currency": "USD",
+  "customer": {
+    "name": "Customer 10",
+    "address": "Address 5"
+  },
+  "items": [
+    {
+      "description": "Item 1",
+      "amount": 20,
+      "quantity": 2
+    },
+    {
+      "description": "Item 2",
+      "amount": 60,
+      "quantity": 1
+    }
+  ]
 }
 
 ### Deletes an invoice
 
-DELETE {{MediatRTest.Api_HostAddress}}/api/v1/invoices/cbad2f35-7a04-466e-ae38-5f3b5369a324
+DELETE {{MediatRTest.Api_HostAddress}}/api/v1/invoices/53f01af2-c34e-445d-bede-bab457f9a24c
 Accept: application/json

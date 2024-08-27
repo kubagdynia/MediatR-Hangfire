@@ -15,6 +15,8 @@ public class Invoice
     public DateTime DueDate { get; set; }
     
     public string Currency { get; set; } = string.Empty;
+
+    public bool WelcomeEmailSent { get; set; } = false;
     
     public int CustomerId { get; set; } // Required foreign key to principal 'Customer'
     public Customer Customer { get; set; } = null!; // Required reference navigation to principal 'Customer

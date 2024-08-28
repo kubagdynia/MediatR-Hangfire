@@ -16,7 +16,8 @@ public class Invoice
     
     public string Currency { get; set; } = string.Empty;
 
-    public bool WelcomeEmailSent { get; set; } = false;
+    // This property is used to track if the invoice has been sent to the customer
+    public bool InvoiceCreationEmailSent { get; set; } = false;
     
     public int CustomerId { get; set; } // Required foreign key to principal 'Customer'
     public Customer Customer { get; set; } = null!; // Required reference navigation to principal 'Customer

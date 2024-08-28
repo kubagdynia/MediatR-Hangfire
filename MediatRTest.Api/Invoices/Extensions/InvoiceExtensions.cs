@@ -41,6 +41,7 @@ public static class InvoiceExtensions
             InvoiceDate = invoice.InvoiceDate,
             DueDate = invoice.DueDate,
             Currency = invoice.Currency,
+            InvoiceCreationEmailSent = invoice.InvoiceCreationEmailSent,
             Customer = new Customer
             {
                 Name = invoice.Customer.Name,

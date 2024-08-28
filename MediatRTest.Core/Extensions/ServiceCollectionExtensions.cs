@@ -1,5 +1,6 @@
 using System.Reflection;
 using FluentValidation;
+using MediatR.NotificationPublishers;
 using MediatR.Pipeline;
 using MediatRTest.Core.Behaviors;
 using MediatRTest.Core.Logging;
@@ -35,6 +36,7 @@ public static class ServiceCollectionExtensions
             config.RegisterServicesFromAssemblies(assemblies);
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
             config.AddOpenBehavior(typeof(RequestPostProcessorBehavior<,>));
+            config.NotificationPublisher = new TaskWhenAllPublisher(); // Default is new NoOpPublisher();
         });
         
         //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

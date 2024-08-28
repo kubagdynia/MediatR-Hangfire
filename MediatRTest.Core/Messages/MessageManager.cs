@@ -2,15 +2,15 @@ using MediatR;
 
 namespace MediatRTest.Core.Messages;
 
-internal sealed class MessageManager(IMediator mediator) : IMessageManager
+internal sealed class MessageManager(IMediator mediator, IPublisher publisher) : IMessageManager
 {
     /// <summary>
     /// Emit only once and almost immediately after creation. 
     /// </summary>
     /// <param name="notification">Notification to be emitted.</param>
-    public void EmitEvent(INotification notification)
+    public async void EmitEvent(INotification notification)
     {
-        mediator.Publish(notification);
+        await publisher.Publish(notification);
     }
 
     /// <summary>
@@ -19,9 +19,9 @@ internal sealed class MessageManager(IMediator mediator) : IMessageManager
     /// <param name="request">Request to be sent.</param>
     /// <typeparam name="TResponse">Object that will be returned</typeparam>
     /// <returns>Response from the command handler</returns>
-    public Task<TResponse> SendCommand<TResponse>(IRequest<TResponse> request)
+    public async Task<TResponse> SendCommand<TResponse>(IRequest<TResponse> request)
     {
-        var response = mediator.Send(request);
+        var response = await mediator.Send(request);
         return response;
     }
 }

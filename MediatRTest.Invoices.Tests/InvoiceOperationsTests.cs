@@ -319,6 +319,43 @@ public class InvoiceOperationsTests
         // The RemoveInvoiceCommandHandler should be called the same number of times as the RemoveInvoiceCommand
         counter.Get().Should().Be(count);
     }
+    
+    [TestCase(1)]
+    [TestCase(10)]
+    [TestCase(100)]
+    public async Task All_created_invoices_should_be_able_to_get_by_passing_their_id2(int count)
+    {
+        var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
+        
+        using IServiceScope scope = serviceProvider.CreateScope();
+        var scopedServices = scope.ServiceProvider;
+        
+        await TestHelper.SetUpDatabase(scopedServices);
+
+        var messageManager = scopedServices.GetRequiredService<IMessageManager>();
+
+        // Arrange
+
+        var createInvoiceResponses = new List<CreateInvoiceCommandResponse>();
+
+        // Act
+        for (var i = 0; i < count; i++)
+        {
+            CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommand(
+                CreateFakeCreateInvoiceCommand());
+            createInvoiceResponses.Add(createInvoiceResponse);
+        }
+
+        // Assert
+        foreach (var createdInvoice in createInvoiceResponses)
+        {
+            GetInvoiceQueryResponse queryResponse =
+                await messageManager.SendCommand(new GetInvoiceQuery(createdInvoice.Invoice?.Id!));
+            queryResponse.Invoice.Should().NotBeNull();
+            queryResponse.Invoice?.Id.Should().BeEquivalentTo(createdInvoice.Invoice?.Id);
+            queryResponse.Invoice?.InvoiceCreationEmailSent.Should().BeTrue();
+        }
+    }
 
     private CreateInvoiceCommand CreateFakeCreateInvoiceCommand(string invoiceNumber = "FV/01/2024")
         => new()

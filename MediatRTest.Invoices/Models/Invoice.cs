@@ -16,6 +16,9 @@ public record Invoice
     
     public string Currency { get; init; } = "USD";
     
+    // This property is used to track if the invoice has been sent to the customer
+    public bool InvoiceCreationEmailSent { get; set; }
+    
     public Customer Customer { get; init; } = new();
     
     public IEnumerable<InvoiceItem> Items { get; init; } = new List<InvoiceItem>();

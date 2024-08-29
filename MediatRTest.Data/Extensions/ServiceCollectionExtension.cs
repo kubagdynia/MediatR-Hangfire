@@ -47,9 +47,9 @@ public static class ServiceCollectionExtension
             }
 
             options
-                .EnableDetailedErrors(databaseOptions.EnableDetailedErrors)
-                .EnableSensitiveDataLogging(databaseOptions.EnableSensitiveDataLogging)
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                .EnableDetailedErrors(databaseOptions.EnableDetailedErrors) // Enable or Disable detailed errors
+                .EnableSensitiveDataLogging(databaseOptions.EnableSensitiveDataLogging) // Enable or Disable sensitive data logging
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); // Disable tracking by default
         });
 
         return services;

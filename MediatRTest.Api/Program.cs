@@ -6,6 +6,7 @@ using MediatRTest.Core.Exceptions;
 using MediatRTest.Data;
 using MediatRTest.Invoices.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,18 @@ builder.Services
         options.SubstituteApiVersionInUrl = true;
     });
 
+// defining Serilog configs
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+// configure logging
+builder.Services.AddLogging(b =>
+{ 
+    b.AddSerilog();
+});
+
 // Build the application
 var app = builder.Build();
 
@@ -71,5 +84,7 @@ var versionedGroup = app
 app.MapEndpoints(versionedGroup);
 
 app.Run();
+
+Log.CloseAndFlush();
 
 public partial class Program;

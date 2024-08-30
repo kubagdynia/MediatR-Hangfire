@@ -10,8 +10,10 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddInvoices(this IServiceCollection services, IConfiguration config, bool registerValidators = true)
     {
+        ArgumentNullException.ThrowIfNull(services);
+        
         // Register the core services
-        services.AddCore(assembly: Assembly.GetExecutingAssembly(), registerValidators: registerValidators);
+        services.AddCore(assembly: Assembly.GetExecutingAssembly(), config, registerValidators: registerValidators);
 
         // Register the data services (database)
         services.AddDbData(config);

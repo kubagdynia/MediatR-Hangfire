@@ -24,14 +24,14 @@ public class DatabaseTests
 
         // Act
         // Create a new invoice and add it to the database
-        CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommand(
+        CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommandAsync(
             CreateFakeCreateInvoiceCommand());
         
         string invoiceId = createInvoiceResponse.Invoice!.Id;
         
         // Get the invoice from the database using the ID
         GetInvoiceQueryResponse queryResponse =
-            await messageManager.SendCommand(new GetInvoiceQuery(createInvoiceResponse.Invoice!.Id));
+            await messageManager.SendCommandAsync(new GetInvoiceQuery(createInvoiceResponse.Invoice!.Id));
         
         // Assert
         queryResponse.Invoice.Should().NotBeNull();

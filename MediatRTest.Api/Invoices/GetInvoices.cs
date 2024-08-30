@@ -17,7 +17,7 @@ public static class GetInvoices
             endpointRouteBuilder.MapGet("invoices", async (IMessageManager messageManager) =>
                 {
                     // Get all invoices
-                    GetInvoicesQueryResponse result = await messageManager.SendCommand(new GetInvoicesQuery());
+                    GetInvoicesQueryResponse result = await messageManager.SendCommandAsync(new GetInvoicesQuery());
 
                     // If there are no invoices, return 204 No Content
                     if (result.Invoices is null || !result.Invoices.Any())

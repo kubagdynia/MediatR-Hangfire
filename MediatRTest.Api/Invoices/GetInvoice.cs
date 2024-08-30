@@ -18,7 +18,7 @@ public static class GetInvoice
             endpointRouteBuilder.MapGet("invoices/{id}", async (string id, IMessageManager messageManager) =>
             {
                 // Get the invoice
-                GetInvoiceQueryResponse result = await messageManager.SendCommand(new GetInvoiceQuery(id));
+                GetInvoiceQueryResponse result = await messageManager.SendCommandAsync(new GetInvoiceQuery(id));
 
                 // If the invoice is not found, return 404 Not Found
                 return result.Invoice is null

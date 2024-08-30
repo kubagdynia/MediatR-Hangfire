@@ -26,7 +26,8 @@ internal sealed class CreateInvoiceHandler(DataContext dataContext, IMessageMana
         await dataContext.SaveChangesAsync(cancellationToken);
         
         // Emit an event that the invoice was created
-        messageManager.EmitEvent(new InvoiceCreatedEvent { InvoiceId = invoice.BussinsId });
+        await messageManager.EmitEventAsync(new InvoiceCreatedEvent { InvoiceId = invoice.BussinsId });
+        //messageManager.EmitScheduledEvent(new InvoiceCreatedEvent { InvoiceId = invoice.BussinsId }, DateTimeOffset.Now.AddMinutes(2));
         
         // Return the invoice
         var response = new CreateInvoiceCommandResponse { Invoice = invoice.ToInvoice() };

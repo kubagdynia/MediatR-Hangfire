@@ -16,7 +16,7 @@ public static class DeleteInvoice
             endpointRouteBuilder.MapDelete("invoices/{id}", async (string id, IMessageManager messageManager) =>
             {
                 // Delete the invoice
-                RemoveInvoiceCommandResponse result = await messageManager.SendCommand(new RemoveInvoiceCommand(id));
+                RemoveInvoiceCommandResponse result = await messageManager.SendCommandAsync(new RemoveInvoiceCommand(id));
                 
                 // If the invoice is not found, return 404 Not Found
                 return result.Removed ? Results.NoContent() : Results.NotFound("Not found");

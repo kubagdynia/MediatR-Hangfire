@@ -33,12 +33,12 @@ public class InvoiceOperationsTests
         // Act
         for (var i = 0; i < count; i++)
         {
-            CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommand(
+            CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommandAsync(
                 CreateFakeCreateInvoiceCommand());
             createInvoiceResponses.Add(createInvoiceResponse);
         }
 
-        GetInvoicesQueryResponse queryResponse = await messageManager.SendCommand(new GetInvoicesQuery());
+        GetInvoicesQueryResponse queryResponse = await messageManager.SendCommandAsync(new GetInvoicesQuery());
 
         // Assert
         queryResponse.Invoices.Should().HaveCount(count);
@@ -75,7 +75,7 @@ public class InvoiceOperationsTests
         // Act
         for (var i = 0; i < count; i++)
         {
-            CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommand(
+            CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommandAsync(
                 CreateFakeCreateInvoiceCommand());
             createInvoiceResponses.Add(createInvoiceResponse);
         }
@@ -84,7 +84,7 @@ public class InvoiceOperationsTests
         foreach (var createdInvoice in createInvoiceResponses)
         {
             GetInvoiceQueryResponse queryResponse =
-                await messageManager.SendCommand(new GetInvoiceQuery(createdInvoice.Invoice?.Id!));
+                await messageManager.SendCommandAsync(new GetInvoiceQuery(createdInvoice.Invoice?.Id!));
             queryResponse.Invoice.Should().NotBeNull();
             queryResponse.Invoice?.Id.Should().BeEquivalentTo(createdInvoice.Invoice?.Id);
         }
@@ -110,7 +110,7 @@ public class InvoiceOperationsTests
         // Act
         for (var i = 0; i < count; i++)
         {
-            CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommand(
+            CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommandAsync(
                 CreateFakeCreateInvoiceCommand());
             createInvoiceResponses.Add(createInvoiceResponse);
         }
@@ -118,12 +118,12 @@ public class InvoiceOperationsTests
         // Assert
         foreach (var createdInvoice in createInvoiceResponses)
         {
-            RemoveInvoiceCommandResponse removeResponse = await messageManager.SendCommand(new RemoveInvoiceCommand(createdInvoice.Invoice?.Id!));
+            RemoveInvoiceCommandResponse removeResponse = await messageManager.SendCommandAsync(new RemoveInvoiceCommand(createdInvoice.Invoice?.Id!));
             removeResponse.Removed.Should().BeTrue();
         }
 
         // Repo should be empty after removing all invoices
-        GetInvoicesQueryResponse queryResponse = await messageManager.SendCommand(new GetInvoicesQuery());
+        GetInvoicesQueryResponse queryResponse = await messageManager.SendCommandAsync(new GetInvoicesQuery());
         queryResponse.Invoices.Should().HaveCount(0);
     }
     
@@ -147,14 +147,14 @@ public class InvoiceOperationsTests
         // Act
         DomainException ex = Assert.ThrowsAsync<DomainException>(async () =>
         {
-            _ = await messageManager.SendCommand(CreateFakeCreateInvoiceCommand(invalidInvoiceNumber));
+            _ = await messageManager.SendCommandAsync(CreateFakeCreateInvoiceCommand(invalidInvoiceNumber));
         });
 
         ex.DomainErrors.Should().HaveCount(1);
         ex.DomainErrors.First().ErrorCode.Should().BeEquivalentTo("LengthValidator");
         ex.DomainErrors.First().PropertyName.Should().BeEquivalentTo("Invoice.InvoiceNumber");
 
-        GetInvoicesQueryResponse result = await messageManager.SendCommand(new GetInvoicesQuery());
+        GetInvoicesQueryResponse result = await messageManager.SendCommandAsync(new GetInvoicesQuery());
 
         // Repo should be empty after throwing the exception
         result.Invoices.Should().HaveCount(0);
@@ -194,7 +194,7 @@ public class InvoiceOperationsTests
         // Act
         for (var i = 0; i < count; i++)
         {
-            await messageManager.SendCommand(new GetInvoiceQuery(Guid.NewGuid().ToString()));
+            await messageManager.SendCommandAsync(new GetInvoiceQuery(Guid.NewGuid().ToString()));
         }
 
         // Assert
@@ -236,7 +236,7 @@ public class InvoiceOperationsTests
         // Act
         for (var i = 0; i < count; i++)
         {
-            await messageManager.SendCommand(new GetInvoicesQuery());
+            await messageManager.SendCommandAsync(new GetInvoicesQuery());
         }
 
         // Assert
@@ -274,7 +274,7 @@ public class InvoiceOperationsTests
         // Act
         for (var i = 0; i < count; i++)
         {
-            await messageManager.SendCommand(CreateFakeCreateInvoiceCommand());
+            await messageManager.SendCommandAsync(CreateFakeCreateInvoiceCommand());
         }
 
         // Assert
@@ -312,7 +312,7 @@ public class InvoiceOperationsTests
         // Act
         for (var i = 0; i < count; i++)
         {
-            await messageManager.SendCommand(new RemoveInvoiceCommand(Guid.NewGuid().ToString()));
+            await messageManager.SendCommandAsync(new RemoveInvoiceCommand(Guid.NewGuid().ToString()));
         }
 
         // Assert
@@ -341,7 +341,7 @@ public class InvoiceOperationsTests
         // Act
         for (var i = 0; i < count; i++)
         {
-            CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommand(
+            CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommandAsync(
                 CreateFakeCreateInvoiceCommand());
             createInvoiceResponses.Add(createInvoiceResponse);
         }
@@ -350,7 +350,7 @@ public class InvoiceOperationsTests
         foreach (var createdInvoice in createInvoiceResponses)
         {
             GetInvoiceQueryResponse queryResponse =
-                await messageManager.SendCommand(new GetInvoiceQuery(createdInvoice.Invoice?.Id!));
+                await messageManager.SendCommandAsync(new GetInvoiceQuery(createdInvoice.Invoice?.Id!));
             queryResponse.Invoice.Should().NotBeNull();
             queryResponse.Invoice?.Id.Should().BeEquivalentTo(createdInvoice.Invoice?.Id);
             queryResponse.Invoice?.InvoiceCreationEmailSent.Should().BeTrue();

@@ -16,7 +16,7 @@ public static class CreateInvoice
             endpointRouteBuilder.MapPost("invoices",  async (CreateInvoiceRequest request, IMessageManager messageManager, LinkGenerator linkGenerator, HttpContext httpContext) =>
                 {
                     // Create a new invoice
-                    CreateInvoiceCommandResponse result = await messageManager.SendCommand(request.ToCreateInvoiceCommand());
+                    CreateInvoiceCommandResponse result = await messageManager.SendCommandAsync(request.ToCreateInvoiceCommand());
 
                     // If the invoice is not created, return 400 Bad Request
                     // Otherwise, return 201 Created

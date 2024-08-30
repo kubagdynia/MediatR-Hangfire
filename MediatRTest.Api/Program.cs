@@ -72,6 +72,8 @@ app.UseHttpsRedirection(); // Redirect HTTP to HTTPS
 //app.UseErrorHandlerMiddleware(); // Use the error handler middleware
 app.UseExceptionHandler(); // Use the global exception handler
 
+app.UseInvoices(builder.Configuration); // Use the invoices services
+
 var apiVersionSet = app.NewApiVersionSet()
     .HasApiVersion(new ApiVersion(1))
     .ReportApiVersions()

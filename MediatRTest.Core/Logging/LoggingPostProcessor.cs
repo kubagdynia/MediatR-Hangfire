@@ -8,7 +8,8 @@ internal sealed class LoggingPostProcessor<TRequest, TResponse>(
 {
     public Task Process(TRequest request, TResponse response, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Processed {RequestName} with response {Response}", typeof(TRequest).Name, response);
+        // Log the request and response
+        logger.LogInformation("[MediatR] Processed {RequestName} with response {Response}", typeof(TRequest).Name, response);
         return Task.CompletedTask;
     }
 }

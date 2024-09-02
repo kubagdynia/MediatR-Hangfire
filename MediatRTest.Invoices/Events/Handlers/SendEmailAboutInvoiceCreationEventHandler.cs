@@ -13,6 +13,8 @@ internal class SendEmailAboutInvoiceCreationEventHandler(DataContext dataContext
         logger.LogInformation("Sending an email about invoice creation: {@InvoiceId}", domainEvent.InvoiceId);
 
         // TODO: Implement the email sending logic here
+        // For now, we will just sleep for 200 milliseconds to simulate the email sending process
+        Thread.Sleep(100);
         
         // Set the InvoiceCreationEmailSent flag to true and save the changes to the database
         var affected = await dataContext.Invoices

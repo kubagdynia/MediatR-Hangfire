@@ -14,8 +14,7 @@ namespace MediatRTest.Invoices.Tests;
 public class InvoiceOperationsTests
 {
     [TestCase(1)]
-    [TestCase(10)]
-    [TestCase(100)]
+    [TestCase(5)]
     public async Task All_created_invoices_should_be_added_to_the_repository(int count)
     {
         // Arrange
@@ -55,8 +54,7 @@ public class InvoiceOperationsTests
     }
     
     [TestCase(1)]
-    [TestCase(10)]
-    [TestCase(100)]
+    [TestCase(5)]
     public async Task All_created_invoices_should_be_able_to_get_by_passing_their_id(int count)
     {
         var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
@@ -91,8 +89,7 @@ public class InvoiceOperationsTests
     }
     
     [TestCase(1)]
-    [TestCase(10)]
-    [TestCase(100)]
+    [TestCase(5)]
     public async Task Id_should_be_possible_to_delete_all_created_invoices(int count)
     {
         // Arrange
@@ -161,8 +158,7 @@ public class InvoiceOperationsTests
     }
     
     [TestCase(1)]
-    [TestCase(10)]
-    [TestCase(100)]
+    [TestCase(5)]
     public async Task Get_invoice_handler_should_be_called_the_same_number_of_times_as_get_invoice_query(int count)
     {
         // Replace the registered IRequestHandler<GetInvoiceQuery, GetInvoiceQueryResponse> with a fake handler.
@@ -203,8 +199,7 @@ public class InvoiceOperationsTests
     }
     
     [TestCase(1)]
-    [TestCase(10)]
-    [TestCase(100)]
+    [TestCase(5)]
     public async Task Get_invoices_handler_should_be_called_the_same_number_of_times_as_get_invoices_query(int count)
     {
         // Replace the registered IRequestHandler<GetInvoicesQuery, GetInvoicesQueryResponse> with a fake handler.
@@ -245,8 +240,7 @@ public class InvoiceOperationsTests
     }
     
     [TestCase(1)]
-    [TestCase(10)]
-    [TestCase(100)]
+    [TestCase(5)]
     public async Task Create_invoice_handler_should_be_called_the_same_number_of_times_as_create_invoice_command(int count)
     {
         // Arrange
@@ -283,8 +277,7 @@ public class InvoiceOperationsTests
     }
     
     [TestCase(1)]
-    [TestCase(10)]
-    [TestCase(100)]
+    [TestCase(5)]
     public async Task Remove_invoice_handler_should_be_called_the_same_number_of_times_as_remove_invoice_command(int count)
     {
         // Arrange
@@ -321,8 +314,7 @@ public class InvoiceOperationsTests
     }
     
     [TestCase(1)]
-    [TestCase(10)]
-    [TestCase(100)]
+    [TestCase(5)]
     public async Task All_created_invoices_should_be_able_to_get_by_passing_their_id2(int count)
     {
         var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();

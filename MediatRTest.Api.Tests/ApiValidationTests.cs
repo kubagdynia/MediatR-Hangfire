@@ -15,7 +15,17 @@ public class ApiValidationTests
     [OneTimeSetUp]
     public void Init()
     {
-        _application = new CustomWebApplicationFactory<Program>();
+        var testConfiguration = new Dictionary<string, string?>
+        {
+            { "Logging:LogLevel:Microsoft.EntityFrameworkCore.Database.Command", "Information" },
+            { "DatabaseOptions:ConnectionString", "Data Source=sqlite.db" },
+            { "DatabaseOptions:InMemoryDatabase", "true" },
+            { "DatabaseOptions:CommandTimeout", "10" },
+            { "DatabaseOptions:EnableSensitiveDataLogging", "false" },
+            { "DatabaseOptions:EnableDetailedErrors", "false" }
+        };
+        
+        _application = new CustomWebApplicationFactory<Program>(testConfiguration);
         TestHelper.CreateAndSeedDatabase(_application);
     }
     

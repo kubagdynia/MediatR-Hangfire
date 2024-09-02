@@ -20,6 +20,7 @@ public static class ApplicationBuilderExtensions
         return app.UseMiddleware<ErrorHandlerMiddleware>();
     }
     
+    // Hangfire middleware
     private static IApplicationBuilder UseCustomHangfire(this IApplicationBuilder app, IConfiguration config)
     {
         ArgumentNullException.ThrowIfNull(app);

@@ -10,6 +10,8 @@ public class CreateInvoicePaymentRequestEventHandler(ILogger<CreateInvoicePaymen
         logger.LogInformation("Starting payment request: {@InvoiceId}", domainEvent.InvoiceId);
 
         // TODO: Implement the payment request logic here
+        // For now, we will just sleep for 100 milliseconds to simulate the payment request process
+        Thread.Sleep(100);
         
         await Task.CompletedTask;
     }

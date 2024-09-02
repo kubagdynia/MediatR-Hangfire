@@ -18,6 +18,7 @@ internal sealed class MessageManager(IMediator mediator, IMessageExecutor messag
     /// <param name="notification">Notification to be emitted.</param>
     public async Task EmitEventAsync(INotification notification)
     {
+        // If Hangfire is enabled, enqueue the job to be executed later
         if (_hangfireConfig.Enabled)
         {
             var mediatorSerializedObject = SerializeObject(notification);
@@ -81,6 +82,7 @@ internal sealed class MessageManager(IMediator mediator, IMessageExecutor messag
     /// <param name="request">Request to be sent.</param>
     public async Task SendCommandAsync(IRequest request)
     {
+        // If Hangfire is enabled, enqueue the job to be executed later
         if (_hangfireConfig.Enabled)
         {
             var mediatorSerializedObject = SerializeObject(request);

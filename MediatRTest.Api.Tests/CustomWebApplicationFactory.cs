@@ -1,11 +1,27 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace MediatRTest.Api.Tests;
 
-public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
+public class CustomWebApplicationFactory<TProgram>(Dictionary<string, string?> appConfig) : WebApplicationFactory<TProgram> where TProgram : class
 {
+    protected override IHost CreateHost(IHostBuilder builder)
+    {
+        builder.ConfigureAppConfiguration(config =>
+        {
+            // Clear the default configuration sources
+            config.Sources.Clear();
+            
+            // Add the configuration from the test project
+            config.AddInMemoryCollection(appConfig);
+        });
+        
+        builder.UseEnvironment("Production"); // Development, Staging, or Production
+        return base.CreateHost(builder);
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
@@ -41,19 +57,9 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
             //     options.UseSqlite(connection);
             // });
         });
-
-        var testConfiguration = new Dictionary<string, string?>
-        {
-            { "Logging:LogLevel:Microsoft.EntityFrameworkCore.Database.Command", "Information" },
-            { "DatabaseOptions:ConnectionString", "Data Source=sqlite.db" },
-            { "DatabaseOptions:InMemoryDatabase", "true" },
-            { "DatabaseOptions:CommandTimeout", "10" },
-            { "DatabaseOptions:EnableSensitiveDataLogging", "false" },
-            { "DatabaseOptions:EnableDetailedErrors", "false" }
-        };
-        var configuration = new ConfigurationBuilder().AddInMemoryCollection(testConfiguration).Build();
+        
+        var configuration = new ConfigurationBuilder().AddInMemoryCollection(appConfig).Build();
         builder.UseConfiguration(configuration);
-
         builder.UseEnvironment("Production"); // Development, Staging, or Production
     }
 }

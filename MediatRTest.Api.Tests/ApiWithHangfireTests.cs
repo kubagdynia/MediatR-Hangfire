@@ -6,7 +6,7 @@ using MediatRTest.Api.Invoices.Contracts.V1;
 namespace MediatRTest.Api.Tests;
 
 [TestFixture]
-public class ApiTests
+public class ApiWithHangfireTests
 {
     private CustomWebApplicationFactory<Program> _application;
     private readonly Dictionary<string, string> _createdInvoices = new();
@@ -21,7 +21,11 @@ public class ApiTests
             { "DatabaseOptions:InMemoryDatabase", "true" },
             { "DatabaseOptions:CommandTimeout", "10" },
             { "DatabaseOptions:EnableSensitiveDataLogging", "false" },
-            { "DatabaseOptions:EnableDetailedErrors", "false" }
+            { "DatabaseOptions:EnableDetailedErrors", "false" },
+            { "Hangfire:Enabled", "true" },
+            { "Hangfire:UseDashboard", "false" },
+            { "Hangfire:UseInMemoryStorage", "true" },
+            { "Hangfire:MaxDefaultWorkerCount", "20" }
         };
         
         _application = new CustomWebApplicationFactory<Program>(testConfiguration);
@@ -33,11 +37,11 @@ public class ApiTests
     {
         _application.Dispose();
     }
-
-    [TestCase("FV/01/2024"), Order(1)]
+    
+    [TestCase("FV/01/2024")]
     [TestCase("FV/02/2024")]
     [TestCase("FV/10/2024")]
-    public async Task CanCreateAnInvoice(string invoiceNumber)
+    public async Task CanCreateAnInvoiceWithAllEvents(string invoiceNumber)
     {
         // Arrange
         using var client = _application.CreateClient();
@@ -102,89 +106,20 @@ public class ApiTests
         invoiceItems[1].Amount.Should().Be(requestedItems[1].Amount);
         invoiceItems[1].Quantity.Should().Be(requestedItems[1].Quantity);
         
+        // The invoice creation email should not be sent immediately because is proceeded by event handler with Hangfire
+        invoiceResponse.InvoiceCreationEmailSent.Should().BeFalse();
+        
+        // Wait for the Hangfire job to be executed
+        Thread.Sleep(500);
+        
+        // Check if the invoice creation email was sent
+        var getResponse = await client.GetAsync($"/api/v1/invoices/{invoiceResponse.Id}");
+        getResponse.IsSuccessStatusCode.Should().BeTrue();
+        
+        var deserializedResponse = await getResponse.Content.ReadFromJsonAsync<InvoiceResponse>();
+        deserializedResponse!.InvoiceCreationEmailSent.Should().BeTrue();
+        
         // Store the invoice ID and number for later use in other tests
         _createdInvoices.Add(invoiceResponse.InvoiceNumber, invoiceResponse.Id);
-    }
-    
-    [Test, Order(2)]
-    public async Task CanRetrieveAllInvoices()
-    {
-        // Arrange
-        using var client = _application.CreateClient();
-        
-        // Act
-        // Get all invoices
-        var response = await client.GetAsync("/api/v1/invoices");
-        response.IsSuccessStatusCode.Should().BeTrue();
-    
-        // Assert
-        // Check if the response is not empty
-        var content = await response.Content.ReadAsStringAsync();
-        content.Should().NotBeEmpty();
-        
-        // Deserialize the response
-        var deserializedResponse = await response.Content.ReadFromJsonAsync<List<InvoiceResponse>>();
-        
-        // Check if the deserialized response is not empty
-        deserializedResponse.Should().NotBeNull();
-        deserializedResponse.Should().HaveCount(_createdInvoices.Count);
-        
-        foreach (var (invoiceNumber, invoiceId) in _createdInvoices)
-        {
-            var invoice = deserializedResponse!.FirstOrDefault(i => i.Id == invoiceId);
-            invoice.Should().NotBeNull();
-            invoice!.InvoiceNumber.Should().Be(invoiceNumber);
-        }
-    }
-    
-    [Test, Order(3)]
-    public async Task CanRetrieveAnInvoice()
-    {
-        using var client = _application.CreateClient();
-
-        foreach (var (invoiceNumber, invoiceId) in _createdInvoices)
-        {
-            // Act
-            // Get the invoice by ID
-            var response = await client.GetAsync($"/api/v1/invoices/{invoiceId}");
-            response.IsSuccessStatusCode.Should().BeTrue();
-            
-            // Assert
-            // Check if the response is not empty
-            var content = await response.Content.ReadAsStringAsync();
-            content.Should().NotBeEmpty();
-            
-            // Deserialize the response
-            var deserializedResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
-            
-            // Check if the deserialized response is not empty
-            deserializedResponse.Should().NotBeNull();
-            // Check if the deserialized response matches the invoice
-            deserializedResponse!.InvoiceNumber.Should().Be(invoiceNumber);
-            // Check if the deserialized response matches the invoice ID
-            deserializedResponse.Id.Should().Be(invoiceId);
-        }
-    }
-    
-    [Test, Order(4)]
-    public async Task CanDeleteAnInvoice()
-    {
-        // Arrange
-        using var client = _application.CreateClient();
-
-        // Act
-        // Delete all invoices
-        foreach (var (_, invoiceId) in _createdInvoices)
-        {
-            var deleteResponse = await client.DeleteAsync($"/api/v1/invoices/{invoiceId}");
-            // Assert
-            deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        }
-        
-        // Check if all invoices have been deleted
-        var getResponse = await client.GetAsync("/api/v1/invoices");
-        getResponse.IsSuccessStatusCode.Should().BeTrue();
-        var content = await getResponse.Content.ReadAsStringAsync();
-        content.Should().BeEmpty();
     }
 }

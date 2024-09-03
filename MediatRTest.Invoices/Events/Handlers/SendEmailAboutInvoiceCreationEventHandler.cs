@@ -16,9 +16,10 @@ internal class SendEmailAboutInvoiceCreationEventHandler(DataContext dataContext
         // For now, we will just sleep for 200 milliseconds to simulate the email sending process
         Thread.Sleep(100);
         
-        // Set the InvoiceCreationEmailSent flag to true and save the changes to the database
-        var affected = await dataContext.Invoices
-            .Where(c => c.BussinsId == domainEvent.InvoiceId)
-            .ExecuteUpdateAsync(s => s.SetProperty(m => m.InvoiceCreationEmailSent, true), cancellationToken);
+        // Update the InvoiceCreationEmailSent flag in the database to indicate that the email has been sent
+        // This is just a simple example, in a real-world scenario, you would send an email using a service like SendGrid or Mailgun
+        var affected = await dataContext.Database.ExecuteSqlAsync(
+            $"UPDATE Invoices SET InvoiceCreationEmailSent = 1, LastUpdated = {DateTime.Now} WHERE BussinsId = {domainEvent.InvoiceId}",
+            cancellationToken);
     }
 }

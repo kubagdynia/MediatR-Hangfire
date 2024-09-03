@@ -5,6 +5,8 @@ namespace MediatRTest.Data;
 
 public class DataContext : DbContext
 {
+    private const string ShadowPropertyLastUpdatedName = "LastUpdated";
+
     public DbSet<Invoice> Invoices { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<InvoiceItem> InvoiceItems { get; set; }
@@ -35,7 +37,7 @@ public class DataContext : DbContext
             .HasForeignKey(item => item.InvoiceId).OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<Invoice>()
-            .Property<DateTime>("LastUpdated");
+            .Property<DateTime>(ShadowPropertyLastUpdatedName);
 
         // Seed data - moved to a separate migration
         // modelBuilder.Entity<Customer>().HasData(
@@ -127,7 +129,7 @@ public class DataContext : DbContext
     {
         foreach (var entry in ChangeTracker.Entries<Invoice>())
         {
-            entry.Property("LastUpdated").CurrentValue = DateTime.Now;
+            entry.Property(ShadowPropertyLastUpdatedName).CurrentValue = DateTime.Now;
         }
     }
 }

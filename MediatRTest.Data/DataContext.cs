@@ -20,6 +20,18 @@ public class DataContext : DbContext
         };
     }
 
+    public override int SaveChanges()
+    {
+        SetCreatedDate();
+        return base.SaveChanges();  
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    {
+        SetCreatedDate();
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Invoice>()
@@ -130,6 +142,16 @@ public class DataContext : DbContext
         foreach (var entry in ChangeTracker.Entries<Invoice>())
         {
             entry.Property(ShadowPropertyLastUpdatedName).CurrentValue = DateTime.Now;
+        }
+    }
+    
+    private void SetCreatedDate()
+    {
+        var entries =
+            ChangeTracker.Entries<Invoice>().Where(e => e.State == EntityState.Added);
+        foreach (var entry in entries)
+        {
+            entry.Property(e => e.CreatedAt).CurrentValue = DateTime.Now;
         }
     }
 }

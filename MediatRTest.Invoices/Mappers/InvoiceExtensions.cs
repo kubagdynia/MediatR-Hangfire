@@ -20,6 +20,7 @@ internal static class InvoiceExtensions
             DueDate = invoice.DueDate,
             Currency = invoice.Currency,
             InvoiceCreationEmailSent = invoice.InvoiceCreationEmailSent,
+            CreatedAt = invoice.CreatedAt,
             Customer = new Models.Customer
             {
                 Name = invoice.Customer.Name,

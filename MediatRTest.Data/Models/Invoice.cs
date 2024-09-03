@@ -19,6 +19,9 @@ public class Invoice
     // This property is used to track if the invoice has been sent to the customer
     public bool InvoiceCreationEmailSent { get; set; } = false;
     
+    // This is the date the invoice was created
+    public DateTime? CreatedAt { get; set; }
+    
     public int CustomerId { get; set; } // Required foreign key to principal 'Customer'
     public Customer Customer { get; set; } = null!; // Required reference navigation to principal 'Customer
     

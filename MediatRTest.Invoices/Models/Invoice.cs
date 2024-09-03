@@ -19,6 +19,9 @@ public record Invoice
     // This property is used to track if the invoice has been sent to the customer
     public bool InvoiceCreationEmailSent { get; set; }
     
+    // This is the date the invoice was created
+    public DateTime? CreatedAt { get; set; }
+    
     public Customer Customer { get; init; } = new();
     
     public IEnumerable<InvoiceItem> Items { get; init; } = new List<InvoiceItem>();

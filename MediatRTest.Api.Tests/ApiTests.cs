@@ -166,6 +166,30 @@ public class ApiTests
         }
     }
     
+    [Test, Order(3)]
+    public async Task CanRetrieveAnInvoiceWithInfoThatEmailHasBeenSent()
+    {
+        using var client = _application.CreateClient();
+
+        foreach (var (invoiceNumber, invoiceId) in _createdInvoices)
+        {
+            // Act
+            // Get the invoice by ID
+            var response = await client.GetAsync($"/api/v1/invoices/{invoiceId}");
+            response.IsSuccessStatusCode.Should().BeTrue();
+            
+            // Assert
+            // Check if the response is not empty
+            var content = await response.Content.ReadAsStringAsync();
+            content.Should().NotBeEmpty();
+            
+            // Deserialize the response
+            var deserializedResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
+            
+            deserializedResponse!.InvoiceCreationEmailSent.Should().BeTrue();
+        }
+    }
+    
     [Test, Order(4)]
     public async Task CanDeleteAnInvoice()
     {

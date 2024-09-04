@@ -4,7 +4,7 @@ public class Invoice
 {
     public int InvoiceId { get; set; }
     
-    public string BussinsId { get; set; } = string.Empty;
+    public string BusinessId { get; set; } = string.Empty;
     
     public string InvoiceNumber { get; set; } = string.Empty;
     

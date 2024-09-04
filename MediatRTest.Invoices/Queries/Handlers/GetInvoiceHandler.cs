@@ -13,7 +13,7 @@ internal sealed class GetInvoiceHandler(DataContext dataContext) : IRequestHandl
         // Get the invoice from the database
         var invoice = await dataContext.Invoices.Include(i => i.Items)
             .Include(c => c.Customer)
-            .FirstOrDefaultAsync(c => c.BussinsId == request.Id, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(c => c.BusinessId == request.Id, cancellationToken: cancellationToken);
         
         // Return the result
         var response = new GetInvoiceQueryResponse

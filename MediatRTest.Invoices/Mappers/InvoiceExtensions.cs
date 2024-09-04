@@ -13,7 +13,7 @@ internal static class InvoiceExtensions
     public static Models.Invoice ToInvoice(this Invoice invoice)
         => new()
         {
-            Id = invoice.BussinsId,
+            Id = invoice.BusinessId,
             InvoiceNumber = invoice.InvoiceNumber,
             Amount = invoice.Amount,
             InvoiceDate = invoice.InvoiceDate,
@@ -42,7 +42,7 @@ internal static class InvoiceExtensions
     public static Invoice ToDbInvoice(this CreateInvoiceCommand cmd, string invoiceId)
         => new()
         {
-            BussinsId = invoiceId,
+            BusinessId = invoiceId,
             InvoiceNumber = cmd.Invoice!.InvoiceNumber,
             Amount = cmd.Invoice.Amount,
             InvoiceDate = cmd.Invoice.InvoiceDate,

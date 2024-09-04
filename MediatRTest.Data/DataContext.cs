@@ -35,7 +35,7 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Invoice>()
-            .HasIndex(i => i.BussinsId).IsUnique();
+            .HasIndex(i => i.BusinessId).IsUnique();
         
         modelBuilder.Entity<Invoice>()
             .HasOne(i => i.Customer)

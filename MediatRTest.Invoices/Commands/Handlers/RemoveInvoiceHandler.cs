@@ -17,7 +17,7 @@ internal sealed class RemoveInvoiceHandler(DataContext dataContext, IMessageMana
         
         // Remove the invoice from the database
         var rowsDeleted = await dataContext.Invoices
-            .Where(i => i.BussinsId == request.Id)
+            .Where(i => i.BusinessId == request.Id)
             .ExecuteDeleteAsync(cancellationToken: cancellationToken);
 
         if (rowsDeleted == 0)

@@ -10,7 +10,7 @@ using MediatRTest.Invoices.Tests.Fakes;
 
 namespace MediatRTest.Invoices.Tests;
 
-[TestFixture]
+[TestFixture(Category = "Unit Tests")]
 public class InvoiceOperationsTests
 {
     [TestCase(1)]
@@ -313,40 +313,32 @@ public class InvoiceOperationsTests
         counter.Get().Should().Be(count);
     }
     
-    [TestCase(1)]
-    [TestCase(5)]
-    public async Task All_created_invoices_should_be_able_to_get_by_passing_their_id2(int count)
+    [TestCase("   ")]
+    [TestCase("test")]
+    [TestCase("123")]
+    public async Task Providing_invalid_invoice_id_when_retrieve_the_invoice_should_thrown_DomainException(string invoiceId)
     {
+        // Arrange
         var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
-        
-        using IServiceScope scope = serviceProvider.CreateScope();
+
+        using var scope = serviceProvider.CreateScope();
         var scopedServices = scope.ServiceProvider;
         
         await TestHelper.SetUpDatabase(scopedServices);
 
         var messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
-        // Arrange
-
-        var createInvoiceResponses = new List<CreateInvoiceCommandResponse>();
-
         // Act
-        for (var i = 0; i < count; i++)
+        var ex = Assert.ThrowsAsync<DomainException>(async () =>
         {
-            CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommandAsync(
-                CreateFakeCreateInvoiceCommand());
-            createInvoiceResponses.Add(createInvoiceResponse);
-        }
+            _ = await messageManager.SendCommandAsync(new GetInvoiceQuery(invoiceId));
+        });
 
         // Assert
-        foreach (var createdInvoice in createInvoiceResponses)
-        {
-            GetInvoiceQueryResponse queryResponse =
-                await messageManager.SendCommandAsync(new GetInvoiceQuery(createdInvoice.Invoice?.Id!));
-            queryResponse.Invoice.Should().NotBeNull();
-            queryResponse.Invoice?.Id.Should().BeEquivalentTo(createdInvoice.Invoice?.Id);
-            queryResponse.Invoice?.InvoiceCreationEmailSent.Should().BeTrue();
-        }
+        ex.DomainErrors.Should().HaveCount(1);
+        ex.DomainErrors.First().ErrorCode.Should().BeEquivalentTo("PredicateValidator");
+        ex.DomainErrors.First().PropertyName.Should().BeEquivalentTo("Id");
+        ex.DomainErrors.First().ErrorMessage.Should().BeEquivalentTo("Invalid Id.");
     }
 
     private CreateInvoiceCommand CreateFakeCreateInvoiceCommand(string invoiceNumber = "FV/01/2024")

@@ -5,7 +5,7 @@ using MediatRTest.Api.Invoices.Contracts.V1;
 
 namespace MediatRTest.Api.Tests;
 
-[TestFixture]
+[TestFixture(Category = "Integration Tests")]
 public class ApiWithHangfireTests
 {
     private CustomWebApplicationFactory<Program> _application;

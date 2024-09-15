@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MediatRTest.Api.Tests;
 
-[TestFixture]
+[TestFixture(Category = "Integration Tests")]
 public class ApiValidationTests
 {
     private CustomWebApplicationFactory<Program> _application;
@@ -319,6 +319,70 @@ public class ApiValidationTests
         errors[0].Code.Should().Be("EqualValidator");
         errors[0].Title.Should().Be("Validation Error");
         errors[0].UserMessage.Should().Be("Invoice amount should be equal to the sum of the items.");
+    }
+    
+    [TestCase("test")]
+    [TestCase("   123  ")]
+    public async Task AttemptingToRetrieveAnInvoiceWithAnInvalidIdShouldReturnAValidationError(string invoiceId)
+    {
+        // Arrange
+        using HttpClient client = _application.CreateClient();
+        
+        // Act
+        HttpResponseMessage response = await client.GetAsync($"/api/v1/invoices/{invoiceId}");
+        
+        // Assert
+        List<TestHelper.Error> errors = await CheckValidationError(response);
+        errors.Should().HaveCount(1);
+        
+        errors[0].Code.Should().Be("PredicateValidator");
+        errors[0].Title.Should().Be("Validation Error");
+        errors[0].UserMessage.Should().Be("Invalid Id.");
+    }
+    
+    [Test]
+    public async Task AttemptingToRetrieveAnInvoiceWithAnValidIdShouldReturnAnInvoice()
+    {
+        // Arrange
+        using HttpClient client = _application.CreateClient();
+        
+        var createInvoiceRequest = CreateInvoiceRequest(request =>
+        {
+            request.InvoiceNumber = "FV/153/2024";
+        });
+        
+        // Act
+        HttpResponseMessage createInvoiceResponse = await client.PostAsJsonAsync("/api/v1/invoices", createInvoiceRequest);
+        
+        createInvoiceResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        
+        // Wait for the invoice to be created
+        Thread.Sleep(200);
+        
+        if (createInvoiceResponse.IsSuccessStatusCode)
+        {
+            InvoiceResponse? invoiceResponse = await createInvoiceResponse.Content.ReadFromJsonAsync<InvoiceResponse>();
+            invoiceResponse.Should().NotBeNull();
+            string invoiceId = invoiceResponse!.Id;
+            
+            // Act
+            HttpResponseMessage response = await client.GetAsync($"/api/v1/invoices/{invoiceId}");
+            
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            
+            var retrievedInvoiceResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
+            retrievedInvoiceResponse.Should().NotBeNull();
+            retrievedInvoiceResponse!.Id.Should().Be(invoiceId);
+            retrievedInvoiceResponse.InvoiceNumber.Should().Be(createInvoiceRequest.InvoiceNumber);
+            retrievedInvoiceResponse.Amount.Should().Be(createInvoiceRequest.Amount);
+            retrievedInvoiceResponse.InvoiceDate.Should().BeCloseTo(createInvoiceRequest.InvoiceDate, TimeSpan.FromSeconds(1));
+            retrievedInvoiceResponse.DueDate.Should().BeCloseTo(createInvoiceRequest.DueDate, TimeSpan.FromSeconds(1));
+            retrievedInvoiceResponse.Currency.Should().Be(createInvoiceRequest.Currency);
+            retrievedInvoiceResponse.Customer.Name.Should().Be(createInvoiceRequest.Customer.Name);
+            retrievedInvoiceResponse.Customer.Address.Should().Be(createInvoiceRequest.Customer.Address);
+            retrievedInvoiceResponse.Items.Should().HaveCount(2);
+        }
     }
 
     private static CreateInvoiceRequest CreateInvoiceRequest(Action<CreateInvoiceRequest> createInvoiceRequestAction)

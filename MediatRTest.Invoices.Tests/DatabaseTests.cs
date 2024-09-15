@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MediatRTest.Invoices.Tests;
 
-[TestFixture]
+[TestFixture(Category = "Unit Tests")]
 public class DatabaseTests
 {
     [Test]

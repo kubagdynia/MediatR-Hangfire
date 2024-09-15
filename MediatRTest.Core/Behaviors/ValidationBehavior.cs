@@ -1,7 +1,7 @@
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
-using MediatRTest.Core.Exceptions;
+using MediatRTest.Core.Exceptions.Domain;
 using MediatRTest.Core.Responses.Domain;
 
 namespace MediatRTest.Core.Behaviors;

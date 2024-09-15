@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace MediatRTest.Invoices.Commands.Handlers;
 
 // This handler is used to create a new invoice
+// It will convert the CreateInvoiceCommand to a DbInvoice and add it to the database
 internal sealed class CreateInvoiceHandler(DataContext dataContext, IMessageManager messageManager, ILogger<CreateInvoiceHandler> logger)
     : IRequestHandler<CreateInvoiceCommand, CreateInvoiceCommandResponse>
 {

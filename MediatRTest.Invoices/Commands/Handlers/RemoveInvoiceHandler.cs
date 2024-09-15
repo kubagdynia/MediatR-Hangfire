@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace MediatRTest.Invoices.Commands.Handlers;
 
 // This handler is used to remove an invoice
+// It will remove the invoice from the database
 internal sealed class RemoveInvoiceHandler(DataContext dataContext, IMessageManager messageManager, ILogger<RemoveInvoiceHandler> logger)
     : IRequestHandler<RemoveInvoiceCommand, RemoveInvoiceCommandResponse>
 {

@@ -1,3 +1,4 @@
+using MediatRTest.Core.Exceptions.Domain;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,24 +1,15 @@
-using MediatRTest.Core.Exceptions;
+using MediatRTest.Core.Exceptions.Domain;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediatRTest.Core.Middlewares;
 
-internal sealed class ErrorHandlerMiddleware
+internal sealed class ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger)
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ErrorHandlerMiddleware> _logger;
-
-    public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (Exception ex)
         {
@@ -79,7 +70,7 @@ internal sealed class ErrorHandlerMiddleware
     }
 
     private void LogException(Exception exception)
-        => _logger.LogError(exception, $"Exception occured: {exception.Message}");
+        => logger.LogError(exception, "Exception occured: {Message}", exception.Message);
 }
 
 internal sealed record Error(string? Code, string? Title, string? Details, string? UserMessage);

@@ -1,6 +1,6 @@
 using MediatRTest.Core.Events;
 
-namespace MediatRTest.Invoices.Events;
+namespace MediatRTest.Invoices.Events.Handlers;
 
 public class InvoiceDeletedEventHandler : BaseEventHandler<InvoiceDeletedEvent>
 {

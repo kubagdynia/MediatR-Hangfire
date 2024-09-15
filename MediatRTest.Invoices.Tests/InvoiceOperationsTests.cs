@@ -1,6 +1,6 @@
 using FluentAssertions;
 using MediatR;
-using MediatRTest.Core.Exceptions;
+using MediatRTest.Core.Exceptions.Domain;
 using MediatRTest.Core.Messages;
 using MediatRTest.Invoices.Commands;
 using MediatRTest.Invoices.Models;

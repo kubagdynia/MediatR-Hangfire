@@ -45,11 +45,13 @@ When an attempt is made to create an invoice, a [command to create the invoice](
 
 If the validation succeeds, the appropriate [handler](https://github.com/kubagdynia/MediatR-Hangfire/blob/main/MediatRTest.Invoices/Commands/Handlers/CreateInvoiceHandler.cs) processes the invoice creation request. The invoice is created and saved in the database, and an event signaling the invoice creation is emitted. If the Hangfire system is enabled ([configuration](https://github.com/kubagdynia/MediatR-Hangfire/blob/main/MediatRTest.Api/appsettings.json)), this event is queued for background processing. There are two handlers attached to the invoice creation event:
 
-- **[SendEmailAboutInvoiceCreationEventHandler](https://github.com/kubagdynia/MediatR-Hangfire/blob/main/MediatRTest.Invoices/Events/Handlers/SendEmailAboutInvoiceCreationEventHandler.cs)** – responsible for sending an email notification about the invoice creation.
+- [SendEmailAboutInvoiceCreationEventHandler](https://github.com/kubagdynia/MediatR-Hangfire/blob/main/MediatRTest.Invoices/Events/Handlers/SendEmailAboutInvoiceCreationEventHandler.cs) – responsible for sending an email notification about the invoice creation.
 
-- **[CreateInvoicePaymentRequestEventHandler](https://github.com/kubagdynia/MediatR-Hangfire/blob/main/MediatRTest.Invoices/Events/Handlers/CreateInvoicePaymentRequestEventHandler.cs)** – initiates the payment request process for the invoice.
+- [CreateInvoicePaymentRequestEventHandler](https://github.com/kubagdynia/MediatR-Hangfire/blob/main/MediatRTest.Invoices/Events/Handlers/CreateInvoicePaymentRequestEventHandler.cs) – initiates the payment request process for the invoice.
 
 This model allows for separation of application logic and ensures scalability and ease of system expansion.
+
+![Invoice creation process](.//docs/images/invoice-creation-process.png)
 
 ### Project structure
 

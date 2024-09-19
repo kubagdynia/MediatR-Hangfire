@@ -51,7 +51,7 @@ If the validation succeeds, the appropriate [handler](https://github.com/kubagdy
 
 This model allows for separation of application logic and ensures scalability and ease of system expansion.
 
-![Invoice creation process](.//docs/images/invoice-creation-process.png)
+![Invoice creation process](.//docs/images/invoice-creation-process.svg)
 
 ### Project structure
 

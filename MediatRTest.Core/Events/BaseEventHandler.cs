@@ -12,9 +12,7 @@ public abstract class BaseEventHandler<TDomainEvent> : INotificationHandler<TDom
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns></returns>
     public async Task Handle(TDomainEvent domainEvent, CancellationToken cancellationToken)
-    {
-        await HandleEvent(domainEvent, cancellationToken);
-    }
+        => await HandleEvent(domainEvent, cancellationToken);
     
     /// <summary>
     /// Actual implementation of event handling.

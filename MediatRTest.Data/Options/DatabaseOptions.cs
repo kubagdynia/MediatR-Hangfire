@@ -1,6 +1,6 @@
 namespace MediatRTest.Data.Options;
 
-public class DatabaseOptions
+public record DatabaseOptions
 {
     public string ConnectionString { get; set; } = string.Empty;
 

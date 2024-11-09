@@ -33,7 +33,7 @@ internal sealed class RemoveInvoiceHandler(DataContext dataContext, IMessageMana
         await messageManager.EmitEventAsync(new InvoiceDeletedEvent { InvoiceId = request.Id });
 
         // Return the result
-        RemoveInvoiceCommandResponse response = new RemoveInvoiceCommandResponse
+        var response = new RemoveInvoiceCommandResponse
         {
             Removed = true
         };

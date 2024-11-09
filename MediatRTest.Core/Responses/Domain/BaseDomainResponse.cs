@@ -1,6 +1,6 @@
 namespace MediatRTest.Core.Responses.Domain;
 
-public class BaseDomainResponse
+public record BaseDomainResponse
 {
     public IList<string>? Errors { get; private set; }
 

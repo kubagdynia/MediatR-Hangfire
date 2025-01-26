@@ -20,7 +20,7 @@ internal class MessageExecutor(IMediator mediator) : IMessageExecutor
         ArgumentNullException.ThrowIfNull(mediatorSerializedObject.AssemblyQualifiedName);
 
         // Get the type of the mediator serialized object
-        var type = Type.GetType(mediatorSerializedObject.AssemblyQualifiedName);
+        Type? type = Type.GetType(mediatorSerializedObject.AssemblyQualifiedName);
 
         ArgumentNullException.ThrowIfNull(type);
 

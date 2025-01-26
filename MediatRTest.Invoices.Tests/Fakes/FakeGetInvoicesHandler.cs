@@ -8,7 +8,7 @@ public class FakeGetInvoicesHandler(Counter counter) : IRequestHandler<GetInvoic
     public Task<GetInvoicesQueryResponse> Handle(GetInvoicesQuery request, CancellationToken cancellationToken)
     {
         counter.Increment();
-        var response = new GetInvoicesQueryResponse();
+        GetInvoicesQueryResponse response = new GetInvoicesQueryResponse();
         return Task.FromResult(response);
     }
 }

@@ -58,7 +58,7 @@ public class CustomWebApplicationFactory<TProgram>(Dictionary<string, string?> a
             // });
         });
         
-        var configuration = new ConfigurationBuilder().AddInMemoryCollection(appConfig).Build();
+        IConfigurationRoot configuration = new ConfigurationBuilder().AddInMemoryCollection(appConfig).Build();
         builder.UseConfiguration(configuration);
         builder.UseEnvironment("Production"); // Development, Staging, or Production
     }

@@ -1,5 +1,6 @@
 ﻿using MediatRTest.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace MediatRTest.Data;
 
@@ -139,7 +140,7 @@ public class DataContext : DbContext
     
     private void UpdateAuditData()
     {
-        foreach (var entry in ChangeTracker.Entries<Invoice>())
+        foreach (EntityEntry<Invoice> entry in ChangeTracker.Entries<Invoice>())
         {
             entry.Property(ShadowPropertyLastUpdatedName).CurrentValue = DateTime.Now;
         }
@@ -147,9 +148,9 @@ public class DataContext : DbContext
     
     private void SetCreatedDate()
     {
-        var entries =
+        IEnumerable<EntityEntry<Invoice>> entries =
             ChangeTracker.Entries<Invoice>().Where(e => e.State == EntityState.Added);
-        foreach (var entry in entries)
+        foreach (EntityEntry<Invoice> entry in entries)
         {
             entry.Property(e => e.CreatedAt).CurrentValue = DateTime.Now;
         }

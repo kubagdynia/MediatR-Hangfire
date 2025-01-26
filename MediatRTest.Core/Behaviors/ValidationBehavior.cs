@@ -21,7 +21,7 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
     {
         if (!validators.Any()) return await next().ConfigureAwait(false);
         
-        var context = new ValidationContext<TRequest>(request);
+        ValidationContext<TRequest> context = new ValidationContext<TRequest>(request);
 
         // Validate the request
         IEnumerable<ValidationFailure> errors = validators
@@ -42,7 +42,7 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
     private static void ThrowValidationException(IEnumerable<ValidationFailure> errors)
     {
         // Create a domain exception
-        var exception = new DomainException("Validation Error", DomainExceptionType.ValidationError);
+        DomainException exception = new DomainException("Validation Error", DomainExceptionType.ValidationError);
 
         // Add domain errors
         foreach (ValidationFailure error in errors)
@@ -57,7 +57,7 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
     private static DomainErrorType GetErrorType(Severity severity)
     {
         // Map severity to domain error type
-        var errorType = severity switch
+        DomainErrorType errorType = severity switch
         {
             Severity.Error => DomainErrorType.Error,
             Severity.Warning => DomainErrorType.Warning,

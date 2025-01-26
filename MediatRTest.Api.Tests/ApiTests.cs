@@ -14,7 +14,7 @@ public class ApiTests
     [OneTimeSetUp]
     public void Init()
     {
-        var testConfiguration = new Dictionary<string, string?>
+        Dictionary<string, string?> testConfiguration = new Dictionary<string, string?>
         {
             { "Logging:LogLevel:Microsoft.EntityFrameworkCore.Database.Command", "Information" },
             { "DatabaseOptions:ConnectionString", "Data Source=sqlite.db" },
@@ -40,9 +40,9 @@ public class ApiTests
     public async Task CanCreateAnInvoice(string invoiceNumber)
     {
         // Arrange
-        using var client = _application.CreateClient();
+        using HttpClient client = _application.CreateClient();
 
-        var createInvoiceRequest = new CreateInvoiceRequest
+        CreateInvoiceRequest createInvoiceRequest = new CreateInvoiceRequest
         {
             InvoiceNumber = invoiceNumber,
             Amount = 790.11,
@@ -73,8 +73,8 @@ public class ApiTests
         };
         
         // Act
-        var response = await client.PostAsJsonAsync("/api/v1/invoices", createInvoiceRequest);
-        var invoiceResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
+        HttpResponseMessage response = await client.PostAsJsonAsync("/api/v1/invoices", createInvoiceRequest);
+        InvoiceResponse? invoiceResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
         
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -93,8 +93,8 @@ public class ApiTests
         invoiceResponse.Customer.Address.Should().Be(createInvoiceRequest.Customer.Address);
         
         invoiceResponse.Items.Should().HaveCount(2);
-        var requestedItems = createInvoiceRequest.Items.ToList();
-        var invoiceItems = invoiceResponse.Items.ToList();
+        List<InvoiceItem> requestedItems = createInvoiceRequest.Items.ToList();
+        List<InvoiceItem> invoiceItems = invoiceResponse.Items.ToList();
         invoiceItems[0].Description.Should().Be(requestedItems[0].Description);
         invoiceItems[0].Amount.Should().Be(requestedItems[0].Amount);
         invoiceItems[0].Quantity.Should().Be(requestedItems[0].Quantity);
@@ -110,28 +110,28 @@ public class ApiTests
     public async Task CanRetrieveAllInvoices()
     {
         // Arrange
-        using var client = _application.CreateClient();
+        using HttpClient client = _application.CreateClient();
         
         // Act
         // Get all invoices
-        var response = await client.GetAsync("/api/v1/invoices");
+        HttpResponseMessage response = await client.GetAsync("/api/v1/invoices");
         response.IsSuccessStatusCode.Should().BeTrue();
     
         // Assert
         // Check if the response is not empty
-        var content = await response.Content.ReadAsStringAsync();
+        string content = await response.Content.ReadAsStringAsync();
         content.Should().NotBeEmpty();
         
         // Deserialize the response
-        var deserializedResponse = await response.Content.ReadFromJsonAsync<List<InvoiceResponse>>();
+        List<InvoiceResponse>? deserializedResponse = await response.Content.ReadFromJsonAsync<List<InvoiceResponse>>();
         
         // Check if the deserialized response is not empty
         deserializedResponse.Should().NotBeNull();
         deserializedResponse.Should().HaveCount(_createdInvoices.Count);
         
-        foreach (var (invoiceNumber, invoiceId) in _createdInvoices)
+        foreach ((string invoiceNumber, string invoiceId) in _createdInvoices)
         {
-            var invoice = deserializedResponse!.FirstOrDefault(i => i.Id == invoiceId);
+            InvoiceResponse? invoice = deserializedResponse!.FirstOrDefault(i => i.Id == invoiceId);
             invoice.Should().NotBeNull();
             invoice!.InvoiceNumber.Should().Be(invoiceNumber);
         }
@@ -140,22 +140,22 @@ public class ApiTests
     [Test, Order(3)]
     public async Task CanRetrieveAnInvoice()
     {
-        using var client = _application.CreateClient();
+        using HttpClient client = _application.CreateClient();
 
-        foreach (var (invoiceNumber, invoiceId) in _createdInvoices)
+        foreach ((string invoiceNumber, string invoiceId) in _createdInvoices)
         {
             // Act
             // Get the invoice by ID
-            var response = await client.GetAsync($"/api/v1/invoices/{invoiceId}");
+            HttpResponseMessage response = await client.GetAsync($"/api/v1/invoices/{invoiceId}");
             response.IsSuccessStatusCode.Should().BeTrue();
             
             // Assert
             // Check if the response is not empty
-            var content = await response.Content.ReadAsStringAsync();
+            string content = await response.Content.ReadAsStringAsync();
             content.Should().NotBeEmpty();
             
             // Deserialize the response
-            var deserializedResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
+            InvoiceResponse? deserializedResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
             
             // Check if the deserialized response is not empty
             deserializedResponse.Should().NotBeNull();
@@ -169,22 +169,22 @@ public class ApiTests
     [Test, Order(3)]
     public async Task CanRetrieveAnInvoiceWithInfoThatEmailHasBeenSent()
     {
-        using var client = _application.CreateClient();
+        using HttpClient client = _application.CreateClient();
 
-        foreach (var (invoiceNumber, invoiceId) in _createdInvoices)
+        foreach ((string invoiceNumber, string invoiceId) in _createdInvoices)
         {
             // Act
             // Get the invoice by ID
-            var response = await client.GetAsync($"/api/v1/invoices/{invoiceId}");
+            HttpResponseMessage response = await client.GetAsync($"/api/v1/invoices/{invoiceId}");
             response.IsSuccessStatusCode.Should().BeTrue();
             
             // Assert
             // Check if the response is not empty
-            var content = await response.Content.ReadAsStringAsync();
+            string content = await response.Content.ReadAsStringAsync();
             content.Should().NotBeEmpty();
             
             // Deserialize the response
-            var deserializedResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
+            InvoiceResponse? deserializedResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
             
             deserializedResponse!.InvoiceCreationEmailSent.Should().BeTrue();
         }
@@ -194,21 +194,21 @@ public class ApiTests
     public async Task CanDeleteAnInvoice()
     {
         // Arrange
-        using var client = _application.CreateClient();
+        using HttpClient client = _application.CreateClient();
 
         // Act
         // Delete all invoices
-        foreach (var (_, invoiceId) in _createdInvoices)
+        foreach ((_, string invoiceId) in _createdInvoices)
         {
-            var deleteResponse = await client.DeleteAsync($"/api/v1/invoices/{invoiceId}");
+            HttpResponseMessage deleteResponse = await client.DeleteAsync($"/api/v1/invoices/{invoiceId}");
             // Assert
             deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
         }
         
         // Check if all invoices have been deleted
-        var getResponse = await client.GetAsync("/api/v1/invoices");
+        HttpResponseMessage getResponse = await client.GetAsync("/api/v1/invoices");
         getResponse.IsSuccessStatusCode.Should().BeTrue();
-        var content = await getResponse.Content.ReadAsStringAsync();
+        string content = await getResponse.Content.ReadAsStringAsync();
         content.Should().BeEmpty();
     }
 }

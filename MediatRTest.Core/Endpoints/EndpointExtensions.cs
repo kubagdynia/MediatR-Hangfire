@@ -1,4 +1,7 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace MediatRTest.Core.Endpoints;
@@ -20,7 +23,7 @@ public static class EndpointExtensions
                 "No assemblies found to scan. Supply at least one assembly to scan for endpoints.");
 
         // Register all endpoints
-        var serviceDescriptors = assemblies.Distinct()
+        ServiceDescriptor[] serviceDescriptors = assemblies.Distinct()
             .SelectMany(a => a.DefinedTypes)
             .Where(type => type is { IsAbstract: false, IsInterface: false } &&
                            type.IsAssignableTo(typeof(IEndpoint)))
@@ -47,12 +50,12 @@ public static class EndpointExtensions
     public static IApplicationBuilder MapEndpoints(this WebApplication app, IEndpointRouteBuilder? routeGroupBuilder = null)
     {
         // Get all endpoints
-        var endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
+        IEnumerable<IEndpoint> endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
         
-        var builder = routeGroupBuilder ?? app;
+        IEndpointRouteBuilder builder = routeGroupBuilder ?? app;
 
         // Map all endpoints
-        foreach (var endpoint in endpoints)
+        foreach (IEndpoint endpoint in endpoints)
         {
             endpoint.MapEndpoint(builder);
         }

@@ -19,7 +19,7 @@ internal class SendEmailAboutInvoiceCreationEventHandler(DataContext dataContext
         // Update the InvoiceCreationEmailSent flag in the database to indicate that the email has been sent
         // This is just a simple example, in a real-world scenario, you would send an email using a service like SendGrid or Mailgun
         // Attention: Should be tested with unit tests because this sql query is using field names from the database, which can be changed in the future.
-        var affected = await dataContext.Database.ExecuteSqlAsync(
+        int affected = await dataContext.Database.ExecuteSqlAsync(
             $"UPDATE Invoices SET InvoiceCreationEmailSent = 1, LastUpdated = {DateTime.Now} WHERE BusinessId = {domainEvent.InvoiceId}",
             cancellationToken);
     }

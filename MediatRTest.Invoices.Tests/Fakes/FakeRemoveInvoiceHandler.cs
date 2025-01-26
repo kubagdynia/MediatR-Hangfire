@@ -9,7 +9,7 @@ public class FakeRemoveInvoiceHandler(Counter counter)
     public Task<RemoveInvoiceCommandResponse> Handle(RemoveInvoiceCommand request, CancellationToken cancellationToken)
     {
         counter.Increment();
-        var response = new RemoveInvoiceCommandResponse { Removed = true };
+        RemoveInvoiceCommandResponse response = new RemoveInvoiceCommandResponse { Removed = true };
         return Task.FromResult(response);
     }
 }

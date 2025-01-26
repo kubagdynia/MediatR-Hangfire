@@ -13,14 +13,14 @@ public class DatabaseTests
     [Test]
     public async Task CanInsertInvoiceIntoDatabaseAndGetItBack()
     {
-        var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
+        ServiceProvider serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
 
-        using var scope = serviceProvider.CreateScope();
-        var scopedServices = scope.ServiceProvider;
+        using IServiceScope scope = serviceProvider.CreateScope();
+        IServiceProvider scopedServices = scope.ServiceProvider;
         
         await TestHelper.SetUpDatabase(scopedServices);
 
-        var messageManager = scopedServices.GetRequiredService<IMessageManager>();
+        IMessageManager messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
         // Act
         // Create a new invoice and add it to the database

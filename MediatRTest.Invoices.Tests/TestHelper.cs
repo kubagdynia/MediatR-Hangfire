@@ -17,11 +17,12 @@ public static class TestHelper
     
     internal static ServiceCollection PrepareServiceCollection(Dictionary<string, string?>? config = null)
     {
-        var services = new ServiceCollection();
+        ServiceCollection services = [];
 
-        var testConfiguration = config ?? new Dictionary<string, string?>();
+        Dictionary<string, string?> testConfiguration = config ?? new Dictionary<string, string?>();
         
-        var configuration = new ConfigurationBuilder().AddInMemoryCollection(testConfiguration).Build();
+        IConfigurationRoot configuration = 
+            new ConfigurationBuilder().AddInMemoryCollection(testConfiguration).Build();
         
         services
             .AddExceptionHandler<GlobalExceptionHandler>()
@@ -47,7 +48,7 @@ public static class TestHelper
     
     internal static async Task SetUpDatabase(IServiceProvider scopedServices)
     {
-        var dataContext = scopedServices.GetRequiredService<DataContext>();
+        DataContext dataContext = scopedServices.GetRequiredService<DataContext>();
         await dataContext.Database.EnsureCreatedAsync();
     }
     
@@ -55,7 +56,7 @@ public static class TestHelper
     {
         // Set up the configuration for the test
         // This configuration will use an in-memory database
-        var testConfiguration = new Dictionary<string, string?>
+        Dictionary<string, string?> testConfiguration = new Dictionary<string, string?>
         {
             {"Logging:LogLevel:Microsoft.EntityFrameworkCore.Database.Command", "Information"},
             {"DatabaseOptions:ConnectionString", "Data Source=sqlite.db"},
@@ -65,7 +66,7 @@ public static class TestHelper
             {"DatabaseOptions:EnableDetailedErrors", "false"}
         };
         
-        var serviceProvider = PrepareServiceProvider(testConfiguration);
+        ServiceProvider serviceProvider = PrepareServiceProvider(testConfiguration);
         return serviceProvider;
     }
 }

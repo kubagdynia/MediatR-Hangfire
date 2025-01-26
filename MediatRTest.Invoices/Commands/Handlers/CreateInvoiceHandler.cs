@@ -1,6 +1,7 @@
 using MediatR;
 using MediatRTest.Core.Messages;
 using MediatRTest.Data;
+using MediatRTest.Data.Models;
 using MediatRTest.Invoices.Events;
 using MediatRTest.Invoices.Mappers;
 using Microsoft.Extensions.Logging;
@@ -15,12 +16,12 @@ internal sealed class CreateInvoiceHandler(DataContext dataContext, IMessageMana
     public async Task<CreateInvoiceCommandResponse> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
     {
         // Generate a new invoice ID
-        var invoiceId = Guid.NewGuid().ToString();
+        string invoiceId = Guid.NewGuid().ToString();
         
         logger.LogInformation("Starting creating an invoice: {@InvoiceId}", invoiceId);
 
         // Convert the CreateInvoiceCommand to a DbInvoice
-        var invoice = request.ToDbInvoice(invoiceId);
+        Invoice invoice = request.ToDbInvoice(invoiceId);
         
         // Add the invoice to the database
         dataContext.Invoices.Add(invoice);
@@ -31,7 +32,7 @@ internal sealed class CreateInvoiceHandler(DataContext dataContext, IMessageMana
         //messageManager.EmitScheduledEvent(new InvoiceCreatedEvent { InvoiceId = invoice.BusinessId }, DateTimeOffset.Now.AddMinutes(2));
         
         // Return the invoice
-        var response = new CreateInvoiceCommandResponse { Invoice = invoice.ToInvoice() };
+        CreateInvoiceCommandResponse response = new CreateInvoiceCommandResponse { Invoice = invoice.ToInvoice() };
         
         return response;
     }

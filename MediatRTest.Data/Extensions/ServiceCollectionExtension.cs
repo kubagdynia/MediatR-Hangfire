@@ -11,15 +11,16 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddDbData(this IServiceCollection services, IConfiguration config)
     {
-        var databaseOptions = config.GetSection("DatabaseOptions").Get<DatabaseOptions>() ??
-                              throw new Exception("DatabaseOptions not found in configuration");
+        DatabaseOptions databaseOptions = 
+            config.GetSection("DatabaseOptions").Get<DatabaseOptions>() ?? 
+            throw new Exception("DatabaseOptions not found in configuration");
         
         if (databaseOptions.InMemoryDatabase)
         {
             // Create open SqliteConnection so EF won't automatically close it.
             services.AddSingleton<DbConnection>(container =>
             {
-                var connection = new SqliteConnection("DataSource=:memory:");
+                SqliteConnection connection = new SqliteConnection("DataSource=:memory:");
                 connection.Open();
 
                 return connection;
@@ -31,7 +32,7 @@ public static class ServiceCollectionExtension
             // Use an in-memory database for testing
             if (databaseOptions.InMemoryDatabase)
             {
-                var connection = container.GetRequiredService<DbConnection>();
+                DbConnection connection = container.GetRequiredService<DbConnection>();
                 options.UseSqlite(connection, optBuilder =>
                 {
                     optBuilder.CommandTimeout(databaseOptions.CommandTimeout);

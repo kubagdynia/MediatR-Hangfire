@@ -18,19 +18,19 @@ public class InvoiceOperationsTests
     public async Task All_created_invoices_should_be_added_to_the_repository(int count)
     {
         // Arrange
-        var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
+        ServiceProvider serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
 
-        using var scope = serviceProvider.CreateScope();
-        var scopedServices = scope.ServiceProvider;
+        using IServiceScope scope = serviceProvider.CreateScope();
+        IServiceProvider scopedServices = scope.ServiceProvider;
         
         await TestHelper.SetUpDatabase(scopedServices);
 
-        var messageManager = scopedServices.GetRequiredService<IMessageManager>();
+        IMessageManager messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
         List<CreateInvoiceCommandResponse> createInvoiceResponses = [];
 
         // Act
-        for (var i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommandAsync(
                 CreateFakeCreateInvoiceCommand());
@@ -44,10 +44,10 @@ public class InvoiceOperationsTests
         queryResponse.Invoices.Should().NotBeNullOrEmpty();
 
         // checking if the invoices ids match the created invoices ids
-        for (var i = 0; i < queryResponse.Invoices?.Count(); i++)
+        for (int i = 0; i < queryResponse.Invoices?.Count(); i++)
         {
-            var repoInvoiceId = queryResponse.Invoices.ElementAt(i).Id;
-            var createdInvoiceId = createInvoiceResponses[i].Invoice?.Id;
+            string repoInvoiceId = queryResponse.Invoices.ElementAt(i).Id;
+            string? createdInvoiceId = createInvoiceResponses[i].Invoice?.Id;
 
             repoInvoiceId.Should().BeEquivalentTo(createdInvoiceId);
         }
@@ -57,21 +57,21 @@ public class InvoiceOperationsTests
     [TestCase(5)]
     public async Task All_created_invoices_should_be_able_to_get_by_passing_their_id(int count)
     {
-        var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
+        ServiceProvider serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
         
         using IServiceScope scope = serviceProvider.CreateScope();
-        var scopedServices = scope.ServiceProvider;
+        IServiceProvider scopedServices = scope.ServiceProvider;
         
         await TestHelper.SetUpDatabase(scopedServices);
 
-        var messageManager = scopedServices.GetRequiredService<IMessageManager>();
+        IMessageManager messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
         // Arrange
 
-        var createInvoiceResponses = new List<CreateInvoiceCommandResponse>();
+        List<CreateInvoiceCommandResponse> createInvoiceResponses = [];
 
         // Act
-        for (var i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommandAsync(
                 CreateFakeCreateInvoiceCommand());
@@ -79,7 +79,7 @@ public class InvoiceOperationsTests
         }
 
         // Assert
-        foreach (var createdInvoice in createInvoiceResponses)
+        foreach (CreateInvoiceCommandResponse createdInvoice in createInvoiceResponses)
         {
             GetInvoiceQueryResponse queryResponse =
                 await messageManager.SendCommandAsync(new GetInvoiceQuery(createdInvoice.Invoice?.Id!));
@@ -93,19 +93,19 @@ public class InvoiceOperationsTests
     public async Task Id_should_be_possible_to_delete_all_created_invoices(int count)
     {
         // Arrange
-        var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
+        ServiceProvider serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
 
         using IServiceScope scope = serviceProvider.CreateScope();
-        var scopedServices = scope.ServiceProvider;
+        IServiceProvider scopedServices = scope.ServiceProvider;
         
         await TestHelper.SetUpDatabase(scopedServices);
 
-        var messageManager = scopedServices.GetRequiredService<IMessageManager>();
+        IMessageManager messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
-        var createInvoiceResponses = new List<CreateInvoiceCommandResponse>();
+        List<CreateInvoiceCommandResponse> createInvoiceResponses = [];
 
         // Act
-        for (var i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             CreateInvoiceCommandResponse createInvoiceResponse = await messageManager.SendCommandAsync(
                 CreateFakeCreateInvoiceCommand());
@@ -113,9 +113,10 @@ public class InvoiceOperationsTests
         }
 
         // Assert
-        foreach (var createdInvoice in createInvoiceResponses)
+        foreach (CreateInvoiceCommandResponse createdInvoice in createInvoiceResponses)
         {
-            RemoveInvoiceCommandResponse removeResponse = await messageManager.SendCommandAsync(new RemoveInvoiceCommand(createdInvoice.Invoice?.Id!));
+            RemoveInvoiceCommandResponse removeResponse = 
+                await messageManager.SendCommandAsync(new RemoveInvoiceCommand(createdInvoice.Invoice?.Id!));
             removeResponse.Removed.Should().BeTrue();
         }
 
@@ -132,10 +133,10 @@ public class InvoiceOperationsTests
     public async Task Providing_invalid_invoice_number_when_creating_the_invoice_should_thrown_DomainException(string invalidInvoiceNumber)
     {
         // Arrange
-        var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
+        ServiceProvider serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
 
-        using var scope = serviceProvider.CreateScope();
-        var scopedServices = scope.ServiceProvider;
+        using IServiceScope scope = serviceProvider.CreateScope();
+        IServiceProvider scopedServices = scope.ServiceProvider;
         
         await TestHelper.SetUpDatabase(scopedServices);
 
@@ -178,17 +179,17 @@ public class InvoiceOperationsTests
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        using var scope = serviceProvider.CreateScope();
-        var scopedServices = scope.ServiceProvider;
+        using IServiceScope scope = serviceProvider.CreateScope();
+        IServiceProvider scopedServices = scope.ServiceProvider;
         
         await TestHelper.SetUpDatabase(scopedServices);
 
-        var messageManager = scopedServices.GetRequiredService<IMessageManager>();
+        IMessageManager messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
-        var counter = scopedServices.GetRequiredService<Counter>();
+        Counter counter = scopedServices.GetRequiredService<Counter>();
 
         // Act
-        for (var i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             await messageManager.SendCommandAsync(new GetInvoiceQuery(Guid.NewGuid().ToString()));
         }
@@ -219,17 +220,17 @@ public class InvoiceOperationsTests
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        using var scope = serviceProvider.CreateScope();
-        var scopedServices = scope.ServiceProvider;
+        using IServiceScope scope = serviceProvider.CreateScope();
+        IServiceProvider scopedServices = scope.ServiceProvider;
         
         await TestHelper.SetUpDatabase(scopedServices);
 
-        var messageManager = scopedServices.GetRequiredService<IMessageManager>();
+        IMessageManager messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
-        var counter = scopedServices.GetRequiredService<Counter>();
+        Counter counter = scopedServices.GetRequiredService<Counter>();
 
         // Act
-        for (var i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             await messageManager.SendCommandAsync(new GetInvoicesQuery());
         }
@@ -256,17 +257,17 @@ public class InvoiceOperationsTests
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        using var scope = serviceProvider.CreateScope();
-        var scopedServices = scope.ServiceProvider;
+        using IServiceScope scope = serviceProvider.CreateScope();
+        IServiceProvider scopedServices = scope.ServiceProvider;
         
         await TestHelper.SetUpDatabase(scopedServices);
 
-        var messageManager = scopedServices.GetRequiredService<IMessageManager>();
+        IMessageManager messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
-        var counter = scopedServices.GetRequiredService<Counter>();
+        Counter counter = scopedServices.GetRequiredService<Counter>();
 
         // Act
-        for (var i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             await messageManager.SendCommandAsync(CreateFakeCreateInvoiceCommand());
         }
@@ -293,17 +294,17 @@ public class InvoiceOperationsTests
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        using var scope = serviceProvider.CreateScope();
-        var scopedServices = scope.ServiceProvider;
+        using IServiceScope scope = serviceProvider.CreateScope();
+        IServiceProvider scopedServices = scope.ServiceProvider;
         
         await TestHelper.SetUpDatabase(scopedServices);
 
-        var messageManager = scopedServices.GetRequiredService<IMessageManager>();
+        IMessageManager messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
-        var counter = scopedServices.GetRequiredService<Counter>();
+        Counter counter = scopedServices.GetRequiredService<Counter>();
 
         // Act
-        for (var i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             await messageManager.SendCommandAsync(new RemoveInvoiceCommand(Guid.NewGuid().ToString()));
         }
@@ -319,17 +320,17 @@ public class InvoiceOperationsTests
     public async Task Providing_invalid_invoice_id_when_retrieve_the_invoice_should_thrown_DomainException(string invoiceId)
     {
         // Arrange
-        var serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
+        ServiceProvider serviceProvider = TestHelper.SetUpServiceProviderWithDefaultInMemoryDatabase();
 
-        using var scope = serviceProvider.CreateScope();
-        var scopedServices = scope.ServiceProvider;
+        using IServiceScope scope = serviceProvider.CreateScope();
+        IServiceProvider scopedServices = scope.ServiceProvider;
         
         await TestHelper.SetUpDatabase(scopedServices);
 
-        var messageManager = scopedServices.GetRequiredService<IMessageManager>();
+        IMessageManager messageManager = scopedServices.GetRequiredService<IMessageManager>();
 
         // Act
-        var ex = Assert.ThrowsAsync<DomainException>(async () =>
+        DomainException? ex = Assert.ThrowsAsync<DomainException>(async () =>
         {
             _ = await messageManager.SendCommandAsync(new GetInvoiceQuery(invoiceId));
         });

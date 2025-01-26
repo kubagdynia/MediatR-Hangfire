@@ -11,7 +11,7 @@ internal class MediatorSerializedObject(string? assemblyQualifiedName, string da
     /// </summary>
     public override string ToString()
     {
-        var fullTypeName = GetFullTypeName();
+        string? fullTypeName = GetFullTypeName();
         return fullTypeName is null ? "No command name" : fullTypeName.Split('.').Last();
     }
     
@@ -24,7 +24,7 @@ internal class MediatorSerializedObject(string? assemblyQualifiedName, string da
         
         string? fullTypeName = null;
         
-        var parts = AssemblyQualifiedName.Split(',');
+        string[] parts = AssemblyQualifiedName.Split(',');
         if (parts.Length > 0)
         {
             fullTypeName = parts[0];

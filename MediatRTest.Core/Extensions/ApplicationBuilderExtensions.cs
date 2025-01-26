@@ -9,14 +9,12 @@ public static class ApplicationBuilderExtensions
     public static IApplicationBuilder UseCore(this IApplicationBuilder app, IConfiguration config)
     {
         ArgumentNullException.ThrowIfNull(app);
-        
         return app.UseCustomHangfire(config);
     }
     
     public static IApplicationBuilder UseErrorHandlerMiddleware(this IApplicationBuilder app)
     {
         ArgumentNullException.ThrowIfNull(app);
-        
         return app.UseMiddleware<ErrorHandlerMiddleware>();
     }
     
@@ -25,7 +23,8 @@ public static class ApplicationBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(app);
         
-        var hangfireConfiguration = config.GetSection(HangfireConfiguration.SectionName).Get<HangfireConfiguration>();
+        HangfireConfiguration? hangfireConfiguration = 
+            config.GetSection(HangfireConfiguration.SectionName).Get<HangfireConfiguration>();
 
         if (hangfireConfiguration is null || !hangfireConfiguration.Enabled || !hangfireConfiguration.UseDashboard)
         {

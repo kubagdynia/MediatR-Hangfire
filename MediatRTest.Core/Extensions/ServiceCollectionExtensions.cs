@@ -67,8 +67,8 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddHangfire(this IServiceCollection services, IConfiguration config)
     {
         // Get the Hangfire configuration from the appsettings.json file.
-        var hangfireConfigurationSection = config.GetSection(HangfireConfiguration.SectionName);
-        var hangfireConfiguration = hangfireConfigurationSection.Get<HangfireConfiguration>();
+        IConfigurationSection hangfireConfigurationSection = config.GetSection(HangfireConfiguration.SectionName);
+        HangfireConfiguration? hangfireConfiguration = hangfireConfigurationSection.Get<HangfireConfiguration>();
         
         // If Hangfire is not enabled, return the services without adding Hangfire.
         if (hangfireConfiguration is null || !hangfireConfiguration.Enabled)

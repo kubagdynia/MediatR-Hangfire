@@ -17,7 +17,7 @@ internal sealed class RemoveInvoiceHandler(DataContext dataContext, IMessageMana
         logger.LogInformation("Starting removing an invoice: {@InvoiceId}", request.Id);
         
         // Remove the invoice from the database
-        var rowsDeleted = await dataContext.Invoices
+        int rowsDeleted = await dataContext.Invoices
             .Where(i => i.BusinessId == request.Id)
             .ExecuteDeleteAsync(cancellationToken: cancellationToken);
 
@@ -33,7 +33,7 @@ internal sealed class RemoveInvoiceHandler(DataContext dataContext, IMessageMana
         await messageManager.EmitEventAsync(new InvoiceDeletedEvent { InvoiceId = request.Id });
 
         // Return the result
-        var response = new RemoveInvoiceCommandResponse
+        RemoveInvoiceCommandResponse response = new RemoveInvoiceCommandResponse
         {
             Removed = true
         };

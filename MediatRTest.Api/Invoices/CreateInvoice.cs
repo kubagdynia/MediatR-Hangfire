@@ -22,7 +22,7 @@ public static class CreateInvoice
                     // Otherwise, return 201 Created
                     // The location header is set to the URI of the new invoice
                     // The response body is the new invoice
-                    var locationUri =
+                    string? locationUri =
                         linkGenerator.GetUriByName(httpContext, nameof(GetInvoice), new { id = result.Invoice!.Id });
                     
                     return Results.Created(locationUri, result.Invoice?.ToInvoiceResponse());

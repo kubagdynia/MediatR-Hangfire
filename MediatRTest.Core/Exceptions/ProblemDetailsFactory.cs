@@ -8,7 +8,7 @@ public static class ProblemDetailsFactory
     public static ProblemDetails Create(HttpContext httpContext, DomainException domainException)
     {
         // Handle domain exceptions
-        var problemDetails = domainException.ExceptionType switch
+        ProblemDetails problemDetails = domainException.ExceptionType switch
         {
             DomainExceptionType.ValidationError => ExecuteValidationError(httpContext, domainException),
             DomainExceptionType.Error => ExecuteConflict(httpContext, domainException),
@@ -24,7 +24,7 @@ public static class ProblemDetailsFactory
     {
         httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
 
-        var problemDetails = GetProblemDetails(
+        ProblemDetails problemDetails = GetProblemDetails(
             domainException,
             title: "Validation Error",
             problemStatus: StatusCodes.Status400BadRequest,
@@ -40,7 +40,7 @@ public static class ProblemDetailsFactory
     {
         httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
         
-        var problemDetails = GetProblemDetails(
+        ProblemDetails problemDetails = GetProblemDetails(
             domainException,
             title: "Error",
             problemStatus: StatusCodes.Status409Conflict,
@@ -55,17 +55,17 @@ public static class ProblemDetailsFactory
         string title, int problemStatus, string problemType,
         Func<DomainError, string>? detailMessage = null)
     {
-        var problemDetails = new ProblemDetails
+        ProblemDetails problemDetails = new ProblemDetails
         {
             Status = problemStatus,
             Title = title,
             Type = problemType
         };
         
-        var errors = new List<Error>();
+        List<Error> errors = new List<Error>();
         
         // Add domain errors to the problem details
-        foreach (var error in domainException.DomainErrors)
+        foreach (DomainError error in domainException.DomainErrors)
         {
             errors.Add(new Error(
                 Code: error.ErrorCode,

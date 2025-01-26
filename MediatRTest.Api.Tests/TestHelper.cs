@@ -17,9 +17,9 @@ internal static class TestHelper
     
     internal static async void CreateAndSeedDatabase(WebApplicationFactory<Program> appFactory)
     {
-        using var scope = appFactory.Services.CreateScope();
-        var scopedServices = scope.ServiceProvider;
-        var dataContext = scopedServices.GetRequiredService<DataContext>();
+        using IServiceScope scope = appFactory.Services.CreateScope();
+        IServiceProvider scopedServices = scope.ServiceProvider;
+        DataContext dataContext = scopedServices.GetRequiredService<DataContext>();
         await dataContext.Database.EnsureCreatedAsync();
     }
     

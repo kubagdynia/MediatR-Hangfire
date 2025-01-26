@@ -21,7 +21,7 @@ internal sealed class MessageManager(IMediator mediator, IMessageExecutor messag
         // If Hangfire is enabled, enqueue the job to be executed later
         if (_hangfireConfig.Enabled)
         {
-            var mediatorSerializedObject = SerializeObject(notification);
+            MediatorSerializedObject mediatorSerializedObject = SerializeObject(notification);
             BackgroundJob.Enqueue(() => messageExecutor.ExecuteEvent(mediatorSerializedObject));
             await Task.CompletedTask;
         }
@@ -41,7 +41,7 @@ internal sealed class MessageManager(IMediator mediator, IMessageExecutor messag
     {
         ThrowIfOperationIsNotSupported();
 
-        var mediatorSerializedObject = SerializeObject(notification);
+        MediatorSerializedObject mediatorSerializedObject = SerializeObject(notification);
         return BackgroundJob.Schedule(() => messageExecutor.ExecuteEvent(mediatorSerializedObject), scheduleAt);
     }
     
@@ -55,8 +55,8 @@ internal sealed class MessageManager(IMediator mediator, IMessageExecutor messag
     {
         ThrowIfOperationIsNotSupported();
 
-        var mediatorSerializedObject = SerializeObject(notification);
-        var newTime = DateTime.Now.Add(delay);
+        MediatorSerializedObject mediatorSerializedObject = SerializeObject(notification);
+        DateTime newTime = DateTime.Now.Add(delay);
         return BackgroundJob.Schedule(() => messageExecutor.ExecuteEvent(mediatorSerializedObject), newTime);
     }
     
@@ -70,7 +70,7 @@ internal sealed class MessageManager(IMediator mediator, IMessageExecutor messag
     {
         ThrowIfOperationIsNotSupported();
             
-        var mediatorSerializedObject = SerializeObject(notification);
+        MediatorSerializedObject mediatorSerializedObject = SerializeObject(notification);
 
         RecurringJob.AddOrUpdate(recurringJobId, () => messageExecutor.ExecuteEvent(mediatorSerializedObject),
             cronExpression, new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
@@ -85,7 +85,7 @@ internal sealed class MessageManager(IMediator mediator, IMessageExecutor messag
         // If Hangfire is enabled, enqueue the job to be executed later
         if (_hangfireConfig.Enabled)
         {
-            var mediatorSerializedObject = SerializeObject(request);
+            MediatorSerializedObject mediatorSerializedObject = SerializeObject(request);
             BackgroundJob.Enqueue(() => messageExecutor.ExecuteCommand(mediatorSerializedObject));
             await Task.CompletedTask;
         }
@@ -106,7 +106,7 @@ internal sealed class MessageManager(IMediator mediator, IMessageExecutor messag
     {
         ThrowIfOperationIsNotSupported();
 
-        var mediatorSerializedObject = SerializeObject(request);
+        MediatorSerializedObject mediatorSerializedObject = SerializeObject(request);
 
         return BackgroundJob.ContinueJobWith(parentJobId,
             () => messageExecutor.ExecuteCommand(mediatorSerializedObject), continuationOption);
@@ -133,7 +133,7 @@ internal sealed class MessageManager(IMediator mediator, IMessageExecutor messag
     {
         ThrowIfOperationIsNotSupported();
 
-        var mediatorSerializedObject = SerializeObject(request);
+        MediatorSerializedObject mediatorSerializedObject = SerializeObject(request);
         return BackgroundJob.Schedule(() => messageExecutor.ExecuteCommand(mediatorSerializedObject), scheduleAt);
     }
     
@@ -147,8 +147,8 @@ internal sealed class MessageManager(IMediator mediator, IMessageExecutor messag
     {
         ThrowIfOperationIsNotSupported();
 
-        var mediatorSerializedObject = SerializeObject(request);
-        var newTime = DateTime.Now.Add(delay);
+        MediatorSerializedObject mediatorSerializedObject = SerializeObject(request);
+        DateTime newTime = DateTime.Now.Add(delay);
         return BackgroundJob.Schedule(() => messageExecutor.ExecuteCommand(mediatorSerializedObject), newTime);
     }
     
@@ -162,7 +162,7 @@ internal sealed class MessageManager(IMediator mediator, IMessageExecutor messag
     {
         ThrowIfOperationIsNotSupported();
             
-        var mediatorSerializedObject = SerializeObject(request);
+        MediatorSerializedObject mediatorSerializedObject = SerializeObject(request);
 
         RecurringJob.AddOrUpdate(recurringJobId, () => messageExecutor.ExecuteCommand(mediatorSerializedObject),
             cronExpression, new RecurringJobOptions { TimeZone = TimeZoneInfo.Local });
@@ -172,9 +172,9 @@ internal sealed class MessageManager(IMediator mediator, IMessageExecutor messag
     {
         ArgumentNullException.ThrowIfNull(mediatorObject);
         
-        var assemblyQualifiedName = mediatorObject.GetType().AssemblyQualifiedName;
+        string? assemblyQualifiedName = mediatorObject.GetType().AssemblyQualifiedName;
 
-        var data = JsonSerializer.Serialize(mediatorObject, BaseJsonOptions.GetJsonSerializerOptions);
+        string data = JsonSerializer.Serialize(mediatorObject, BaseJsonOptions.GetJsonSerializerOptions);
 
         return new MediatorSerializedObject(assemblyQualifiedName, data);
     }

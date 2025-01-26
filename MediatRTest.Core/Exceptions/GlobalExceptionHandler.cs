@@ -18,12 +18,12 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         if (exception is DomainException domainException)
         {
             // Handle domain exceptions
-            var problemDetails = ProblemDetailsFactory.Create(httpContext, domainException);
+            ProblemDetails problemDetails = ProblemDetailsFactory.Create(httpContext, domainException);
             await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
         }
         else
         {
-            var problemDetails = new ProblemDetails
+            ProblemDetails problemDetails = new ProblemDetails
             {
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "Server Error",

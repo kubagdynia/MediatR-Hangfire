@@ -25,16 +25,16 @@ internal sealed class ErrorHandlerMiddleware(RequestDelegate next, ILogger<Error
         {
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             
-            var problemDetails = new ProblemDetails
+            ProblemDetails problemDetails = new ProblemDetails
             {
                 Status = context.Response.StatusCode,
                 Title = "Validation Error",
                 Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1",
             };
 
-            var errors = new List<Error>();
+            List<Error> errors = [];
 
-            foreach (var error in domainException.DomainErrors)
+            foreach (DomainError error in domainException.DomainErrors)
             {
                 errors.Add(new Error(
                     Code: error.ErrorCode,
@@ -44,7 +44,7 @@ internal sealed class ErrorHandlerMiddleware(RequestDelegate next, ILogger<Error
                     ));
             }
 
-            if (errors.Any())
+            if (errors.Count != 0)
             {
                 problemDetails.Extensions = new Dictionary<string, object?>
                 {
@@ -56,7 +56,7 @@ internal sealed class ErrorHandlerMiddleware(RequestDelegate next, ILogger<Error
         }
         else
         {
-            var problemDetails = new ProblemDetails
+            ProblemDetails problemDetails = new ProblemDetails
             {
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "Server Error",

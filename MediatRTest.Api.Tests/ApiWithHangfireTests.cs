@@ -14,7 +14,7 @@ public class ApiWithHangfireTests
     [OneTimeSetUp]
     public void Init()
     {
-        var testConfiguration = new Dictionary<string, string?>
+        Dictionary<string, string?> testConfiguration = new Dictionary<string, string?>
         {
             { "Logging:LogLevel:Microsoft.EntityFrameworkCore.Database.Command", "Information" },
             { "DatabaseOptions:ConnectionString", "Data Source=sqlite.db" },
@@ -44,9 +44,9 @@ public class ApiWithHangfireTests
     public async Task CanCreateAnInvoiceWithAllEvents(string invoiceNumber)
     {
         // Arrange
-        using var client = _application.CreateClient();
+        using HttpClient client = _application.CreateClient();
 
-        var createInvoiceRequest = new CreateInvoiceRequest
+        CreateInvoiceRequest createInvoiceRequest = new CreateInvoiceRequest
         {
             InvoiceNumber = invoiceNumber,
             Amount = 790.11,
@@ -77,8 +77,8 @@ public class ApiWithHangfireTests
         };
         
         // Act
-        var response = await client.PostAsJsonAsync("/api/v1/invoices", createInvoiceRequest);
-        var invoiceResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
+        HttpResponseMessage response = await client.PostAsJsonAsync("/api/v1/invoices", createInvoiceRequest);
+        InvoiceResponse? invoiceResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
         
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -97,8 +97,8 @@ public class ApiWithHangfireTests
         invoiceResponse.Customer.Address.Should().Be(createInvoiceRequest.Customer.Address);
         
         invoiceResponse.Items.Should().HaveCount(2);
-        var requestedItems = createInvoiceRequest.Items.ToList();
-        var invoiceItems = invoiceResponse.Items.ToList();
+        List<InvoiceItem> requestedItems = createInvoiceRequest.Items.ToList();
+        List<InvoiceItem> invoiceItems = invoiceResponse.Items.ToList();
         invoiceItems[0].Description.Should().Be(requestedItems[0].Description);
         invoiceItems[0].Amount.Should().Be(requestedItems[0].Amount);
         invoiceItems[0].Quantity.Should().Be(requestedItems[0].Quantity);
@@ -113,10 +113,10 @@ public class ApiWithHangfireTests
         Thread.Sleep(500);
         
         // Check if the invoice creation email was sent
-        var getResponse = await client.GetAsync($"/api/v1/invoices/{invoiceResponse.Id}");
+        HttpResponseMessage getResponse = await client.GetAsync($"/api/v1/invoices/{invoiceResponse.Id}");
         getResponse.IsSuccessStatusCode.Should().BeTrue();
         
-        var deserializedResponse = await getResponse.Content.ReadFromJsonAsync<InvoiceResponse>();
+        InvoiceResponse? deserializedResponse = await getResponse.Content.ReadFromJsonAsync<InvoiceResponse>();
         deserializedResponse!.InvoiceCreationEmailSent.Should().BeTrue();
         
         // Store the invoice ID and number for later use in other tests

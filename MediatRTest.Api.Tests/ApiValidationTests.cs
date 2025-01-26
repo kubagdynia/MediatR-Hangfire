@@ -15,7 +15,7 @@ public class ApiValidationTests
     [OneTimeSetUp]
     public void Init()
     {
-        var testConfiguration = new Dictionary<string, string?>
+        Dictionary<string, string?> testConfiguration = new Dictionary<string, string?>
         {
             { "Logging:LogLevel:Microsoft.EntityFrameworkCore.Database.Command", "Information" },
             { "DatabaseOptions:ConnectionString", "Data Source=sqlite.db" },
@@ -41,7 +41,7 @@ public class ApiValidationTests
         // Arrange
         using HttpClient client = _application.CreateClient();
         
-        var createInvoiceRequest = CreateInvoiceRequest(request =>
+        CreateInvoiceRequest createInvoiceRequest = CreateInvoiceRequest(request =>
         {
             request.InvoiceNumber = string.Empty;  // Empty invoice number should result in an error
         });
@@ -64,7 +64,7 @@ public class ApiValidationTests
         // Arrange
         using HttpClient client = _application.CreateClient();
         
-        var createInvoiceRequest = CreateInvoiceRequest(request =>
+        CreateInvoiceRequest createInvoiceRequest = CreateInvoiceRequest(request =>
         {
             request.Amount = 0; // Amount should be greater than 0, so it should result in an error
             request.Items = new List<InvoiceItem>
@@ -100,7 +100,7 @@ public class ApiValidationTests
         // Arrange
         using HttpClient client = _application.CreateClient();
         
-        var createInvoiceRequest = CreateInvoiceRequest(request =>
+        CreateInvoiceRequest createInvoiceRequest = CreateInvoiceRequest(request =>
         {
             request.Amount = 790.11;
             request.InvoiceDate = DateTime.Now;
@@ -125,7 +125,7 @@ public class ApiValidationTests
         // Arrange
         using HttpClient client = _application.CreateClient();
         
-        var createInvoiceRequest = CreateInvoiceRequest(request =>
+        CreateInvoiceRequest createInvoiceRequest = CreateInvoiceRequest(request =>
         {
             request.Currency = "US"; // Currency should consist of three characters
         });
@@ -148,7 +148,7 @@ public class ApiValidationTests
         // Arrange
         using HttpClient client = _application.CreateClient();
         
-        var createInvoiceRequest = CreateInvoiceRequest(request =>
+        CreateInvoiceRequest createInvoiceRequest = CreateInvoiceRequest(request =>
         {
             request.Items = new List<InvoiceItem>();
         });
@@ -175,7 +175,7 @@ public class ApiValidationTests
         // Arrange
         using HttpClient client = _application.CreateClient();
         
-        var createInvoiceRequest = CreateInvoiceRequest(request =>
+        CreateInvoiceRequest createInvoiceRequest = CreateInvoiceRequest(request =>
         {
             request.Amount = 100;
             request.Items = new List<InvoiceItem>
@@ -213,7 +213,7 @@ public class ApiValidationTests
         // Arrange
         using HttpClient client = _application.CreateClient();
         
-        var createInvoiceRequest = CreateInvoiceRequest(request =>
+        CreateInvoiceRequest createInvoiceRequest = CreateInvoiceRequest(request =>
         {
             request.Amount = 100;
             request.Items = new List<InvoiceItem>
@@ -251,7 +251,7 @@ public class ApiValidationTests
         // Arrange
         using HttpClient client = _application.CreateClient();
         
-        var createInvoiceRequest = CreateInvoiceRequest(request =>
+        CreateInvoiceRequest createInvoiceRequest = CreateInvoiceRequest(request =>
         {
             request.Amount = 100;
             request.Items = new List<InvoiceItem>
@@ -289,7 +289,7 @@ public class ApiValidationTests
         // Arrange
         using HttpClient client = _application.CreateClient();
         
-        var createInvoiceRequest = CreateInvoiceRequest(request =>
+        CreateInvoiceRequest createInvoiceRequest = CreateInvoiceRequest(request =>
         {
             request.Amount = 150;
             request.Items = new List<InvoiceItem>
@@ -346,7 +346,7 @@ public class ApiValidationTests
         // Arrange
         using HttpClient client = _application.CreateClient();
         
-        var createInvoiceRequest = CreateInvoiceRequest(request =>
+        CreateInvoiceRequest createInvoiceRequest = CreateInvoiceRequest(request =>
         {
             request.InvoiceNumber = "FV/153/2024";
         });
@@ -371,7 +371,7 @@ public class ApiValidationTests
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             
-            var retrievedInvoiceResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
+            InvoiceResponse? retrievedInvoiceResponse = await response.Content.ReadFromJsonAsync<InvoiceResponse>();
             retrievedInvoiceResponse.Should().NotBeNull();
             retrievedInvoiceResponse!.Id.Should().Be(invoiceId);
             retrievedInvoiceResponse.InvoiceNumber.Should().Be(createInvoiceRequest.InvoiceNumber);
@@ -387,7 +387,7 @@ public class ApiValidationTests
 
     private static CreateInvoiceRequest CreateInvoiceRequest(Action<CreateInvoiceRequest> createInvoiceRequestAction)
     {
-        var createInvoiceRequest = new CreateInvoiceRequest
+        CreateInvoiceRequest createInvoiceRequest = new CreateInvoiceRequest
         {
             InvoiceNumber = "FV/01/2024",
             Amount = 790.11,
@@ -428,7 +428,7 @@ public class ApiValidationTests
         
         ProblemDetails? problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         problemDetails.Should().NotBeNull();
-        problemDetails!.Status.Should().Be(StatusCodes.Status400BadRequest);
+        problemDetails.Status.Should().Be(StatusCodes.Status400BadRequest);
         problemDetails.Title.Should().Be("Validation Error");
         problemDetails.Type.Should().Be("https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1");
         

@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
+using Asp.Versioning.Builder;
 using MediatRTest.Core.Endpoints;
 using MediatRTest.Core.Exceptions;
 using MediatRTest.Data;
@@ -8,7 +9,7 @@ using MediatRTest.Invoices.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container for configuration and dependency injection
 builder.Configuration
@@ -54,7 +55,7 @@ builder.Services.AddLogging(b =>
 });
 
 // Build the application
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
@@ -62,8 +63,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(); // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
     
     // Create the database if it doesn't exist and apply any pending migration.
-    using var scope = app.Services.CreateScope();
-    var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+    using IServiceScope scope = app.Services.CreateScope();
+    DataContext dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
     dataContext.Database.Migrate();
 }
 
@@ -74,12 +75,12 @@ app.UseExceptionHandler(); // Use the global exception handler
 
 app.UseInvoices(builder.Configuration); // Use the invoices services
 
-var apiVersionSet = app.NewApiVersionSet()
+ApiVersionSet apiVersionSet = app.NewApiVersionSet()
     .HasApiVersion(new ApiVersion(1))
     .ReportApiVersions()
     .Build();
 
-var versionedGroup = app
+RouteGroupBuilder versionedGroup = app
     .MapGroup("api/v{version:apiVersion}")
     .WithApiVersionSet(apiVersionSet);
 
